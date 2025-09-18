@@ -1,0 +1,13 @@
+{
+  "cSpell.words": [
+    "BROWSABLE",
+    "Codegen",
+    "nedstar",
+    "rnstorybook",
+    "shiki",
+    "shikimori",
+    "worklets",
+    "xcworkspace"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "shiki-react-native",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "install-gems": "bundle install",
+    "install-pods": "cd ios && bundle exec pod install && cd ..",
+    "bootstrap": "yarn install-gems && yarn install-pods",
+    "start": "expo start --dev-client",
+    "start:clear": "yarn start --clear",
+    "ios": "expo run:ios --device='iPhone 16'",
+    "android": "expo run:android",
+    "open-ios": "open ios/Shiki.xcworkspace",
+    "open-android": "open -a /Applications/Android\\ Studio.app android"
+  },
+  "dependencies": {
+    "expo": "54.0.8",
+    "expo-constants": "18.0.9",
+    "expo-splash-screen": "31.0.10",
+    "expo-system-ui": "6.0.7",
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "react-native-gesture-handler": "2.28.0",
+    "react-native-reanimated": "4.1.0",
+    "react-native-safe-area-context": "5.6.1",
+    "react-native-worklets": "0.5.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.13",
+    "eslint": "9.35.0",
+    "eslint-config-expo": "10.0.0",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "yarn@4.9.4",
+  "private": true
+}
