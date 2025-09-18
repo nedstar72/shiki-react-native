@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "license": "Apache-2.0",
   "scripts": {
+    "prettier": "prettier src --check",
+    "prettier:fix": "prettier src --write",
+    "prettier:all": "prettier . --check",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "type-check": "tsc --noEmit",
     "install-gems": "bundle install",
     "install-pods": "cd ios && bundle exec pod install && cd ..",
@@ -30,6 +35,11 @@
     "@types/react": "19.1.13",
     "eslint": "9.35.0",
     "eslint-config-expo": "10.0.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.4",
+    "lefthook": "1.13.1",
+    "lint-staged": "16.1.6",
+    "prettier": "3.6.2",
     "typescript": "5.9.2"
   },
   "engines": {
