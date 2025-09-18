@@ -7,6 +7,8 @@ import { createStaticNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 
+import TestSVG from './test.svg';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -47,6 +49,7 @@ export function RootScreen() {
         <Text>Hello World! 🚀</Text>
         <Text>{Constants.deviceName ?? 'Unknown'}</Text>
         <TimerComponent />
+        <TestSVG width={100} height={100} />
       </SafeAreaView>
     </SafeAreaProvider>
   );
