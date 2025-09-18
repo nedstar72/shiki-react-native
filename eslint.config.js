@@ -2,7 +2,14 @@ const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
 
-const EXTERNAL_IMPORT_ORDER = ['react', 'react-native', 'react-native-**', 'expo', 'expo-**'];
+const EXTERNAL_IMPORT_ORDER = [
+  'react',
+  'react-native',
+  'react-native-**',
+  '@react-navigation/**',
+  'expo',
+  'expo-**',
+];
 
 module.exports = defineConfig([
   expoConfig,
