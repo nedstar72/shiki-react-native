@@ -1,27 +1,27 @@
 export default {
   expo: {
-    name: "Shiki",
-    slug: "shiki",
-    scheme: "shiki",
-    version: "0.1.0",
-    orientation: "default",
-    icon: "./assets/images/icon.png",
-    userInterfaceStyle: "automatic",
+    name: 'Shiki',
+    slug: 'shiki',
+    scheme: 'shiki',
+    version: '0.1.0',
+    orientation: 'default',
+    icon: './assets/images/icon.png',
+    userInterfaceStyle: 'automatic',
     newArchEnabled: true,
     ios: {
       bundleIdentifier: 'dev.nedstar.shiki',
-      supportsTablet: true
+      supportsTablet: true,
     },
     android: {
       package: 'dev.nedstar.shiki',
       adaptiveIcon: {
-        backgroundColor: "#E6F4FE",
-        foregroundImage: "./assets/images/android-icon-foreground.png",
-        backgroundImage: "./assets/images/android-icon-background.png",
-        monochromeImage: "./assets/images/android-icon-monochrome.png"
+        backgroundColor: '#E6F4FE',
+        foregroundImage: './assets/images/android-icon-foreground.png',
+        backgroundImage: './assets/images/android-icon-background.png',
+        monochromeImage: './assets/images/android-icon-monochrome.png',
       },
       edgeToEdgeEnabled: true,
-      predictiveBackGestureEnabled: false
+      predictiveBackGestureEnabled: false,
     },
     plugins: [
       [
@@ -37,8 +37,14 @@ export default {
         },
       ],
     ],
+    extra: {
+      oauth2: {
+        clientId: process.env.EXPO_PUBLIC_OAUTH2_CLIENT_ID,
+        clientSecret: process.env.EXPO_PUBLIC_OAUTH2_CLIENT_SECRET,
+      },
+    },
     experiments: {
-      reactCompiler: true
-    }
-  }
-}
+      reactCompiler: true,
+    },
+  },
+};

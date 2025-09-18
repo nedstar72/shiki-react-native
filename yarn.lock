@@ -5854,7 +5854,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"invariant@npm:^2.2.4":
+"invariant@npm:2.2.4, invariant@npm:^2.2.4":
   version: 2.2.4
   resolution: "invariant@npm:2.2.4"
   dependencies:
@@ -8472,6 +8472,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-app-auth@npm:8.0.3":
+  version: 8.0.3
+  resolution: "react-native-app-auth@npm:8.0.3"
+  dependencies:
+    invariant: "npm:2.2.4"
+    react-native-base64: "npm:0.0.2"
+  peerDependencies:
+    react-native: ">=0.63.0"
+  checksum: 10c0/a3b7e5394c509ad05fb091484d5ff0a14bf6e09b0cfa14c5d81b1abcd92b3e7110f17dca08cb4337e93725e78eddab4611c95a67ab2c7b8bec36984d8ae99999
+  languageName: node
+  linkType: hard
+
+"react-native-base64@npm:0.0.2":
+  version: 0.0.2
+  resolution: "react-native-base64@npm:0.0.2"
+  checksum: 10c0/655e5638c30bc0af1ac649ba053e849a268f12d9657124b1418e27019cbf0f4141e5a93086ee640b46e90e5bb1003d640f38d55504b3637fcd72b7894ac1a30c
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:2.28.0":
   version: 2.28.0
   resolution: "react-native-gesture-handler@npm:2.28.0"
@@ -9174,6 +9193,7 @@ __metadata:
     prettier: "npm:3.6.2"
     react: "npm:19.1.0"
     react-native: "npm:0.81.4"
+    react-native-app-auth: "npm:8.0.3"
     react-native-gesture-handler: "npm:2.28.0"
     react-native-reanimated: "npm:4.1.0"
     react-native-safe-area-context: "npm:5.6.1"

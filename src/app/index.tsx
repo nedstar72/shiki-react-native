@@ -7,6 +7,8 @@ import { createStaticNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
 
+import { AuthButton } from '@/features/auth';
+
 import TestSVG from './test.svg';
 
 const styles = StyleSheet.create({
@@ -50,6 +52,7 @@ export function RootScreen() {
         <Text>{Constants.deviceName ?? 'Unknown'}</Text>
         <TimerComponent />
         <TestSVG width={100} height={100} />
+        <AuthButton />
       </SafeAreaView>
     </SafeAreaProvider>
   );
