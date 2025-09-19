@@ -44,3 +44,6 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
+
+# Storybook
+.rnstorybook/storybook.requires.js

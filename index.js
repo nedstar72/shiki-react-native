@@ -3,4 +3,12 @@ import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 import { App } from './src/app';
 
-AppRegistry.registerComponent(appName, () => App);
+let AppEntry;
+
+if (process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true') {
+  AppEntry = require('./.rnstorybook').default;
+} else {
+  AppEntry = App;
+}
+
+AppRegistry.registerComponent(appName, () => AppEntry);

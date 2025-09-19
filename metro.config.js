@@ -1,5 +1,6 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { mergeConfig } = require('@react-native/metro-config');
+const withStorybook = require('@storybook/react-native/metro/withStorybook');
 const { getDefaultConfig } = require('expo/metro-config');
 
 /** @type {import('expo/metro-config').MetroConfig} */
@@ -19,7 +20,26 @@ const config = {
   resolver: {
     assetExts: assetExts.filter(ext => ext !== 'svg'),
     sourceExts: [...sourceExts, 'svg'],
+
+    // https://dev.to/dannyhw/how-to-swap-between-react-native-storybook-and-your-app-p3o
+    resolveRequest: (context, moduleName, platform) => {
+      const defaultResolveResult = context.resolveRequest(context, moduleName, platform);
+
+      if (
+        process.env.EXPO_PUBLIC_STORYBOOK_ENABLED !== 'true' &&
+        defaultResolveResult?.filePath?.includes('.rnstorybook/')
+      ) {
+        return {
+          type: 'empty',
+        };
+      }
+
+      return defaultResolveResult;
+    },
   },
 };
 
-module.exports = mergeConfig(defaultConfig, config);
+module.exports = withStorybook(mergeConfig(defaultConfig, config), {
+  enabled: process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true',
+  useJs: true,
+});
