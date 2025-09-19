@@ -47,3 +47,7 @@ expo-env.d.ts
 
 # Storybook
 .rnstorybook/storybook.requires.js
+
+# GraphQL
+graphql.schema.json
+src/shared/shikimori-api/index.ts

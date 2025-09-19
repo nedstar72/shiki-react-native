@@ -1,0 +1,7 @@
+query FetchAnimeList {
+  animes(limit: 10) {
+    id
+    name
+    url
+  }
+}
