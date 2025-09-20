@@ -2,8 +2,9 @@ import { Text, TouchableHighlight } from 'react-native';
 import { authorize } from 'react-native-app-auth';
 import Constants from 'expo-constants';
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+import { array, parse } from 'valibot';
 
-import { FetchAnimeList } from '@/features/anime';
+import { FetchAnimeList, AnimeSchema, type Anime } from '@/features/anime';
 
 const client = new ApolloClient({
   link: new HttpLink({ uri: 'https://shikimori.one/api/graphql' }),
@@ -28,7 +29,14 @@ function AuthButton() {
       .query({
         query: FetchAnimeList,
       })
-      .then(result => console.log(result.data?.animes));
+      .then(result => {
+        const schema = array(AnimeSchema);
+        const animes = parse(schema, result.data?.animes ?? []);
+        console.log(animes as Anime[]);
+      })
+      .catch(error => {
+        console.error('Validation or query failed', error);
+      });
   };
 
   return (
