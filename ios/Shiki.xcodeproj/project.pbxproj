@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		A02E9A50AB59A2BDC422556D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E2F55618012415E2A62D6E34 /* PrivacyInfo.xcprivacy */; };
-		AFC4BDBCF7CA61C9B9100B48 /* libPods-Shiki.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC312B3A3ADC6ABE55ECC4AD /* libPods-Shiki.a */; };
+		4166B239CF1BE0A5E800B11A /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5100F8E83F925A9EEF313C95 /* ExpoModulesProvider.swift */; };
+		4577C08DAD16879BD8B4EBE1 /* libPods-Shiki.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E16E080991CE01D0C2531BE /* libPods-Shiki.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C6B4A40D11ED61BD78DCBDC7 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8B5F01B2FB40BEEB710752 /* ExpoModulesProvider.swift */; };
+		DAB0C060334D22E1536F6D5E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 73ACB10AFC01AADF7A40A144 /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -20,16 +20,16 @@
 		13B07F961A680F5B00A75B9A /* Shiki.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shiki.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Shiki/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Shiki/Info.plist; sourceTree = "<group>"; };
-		3DDF38D219C85F36635EDFCD /* Pods-Shiki.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shiki.debug.xcconfig"; path = "Target Support Files/Pods-Shiki/Pods-Shiki.debug.xcconfig"; sourceTree = "<group>"; };
+		2E16E080991CE01D0C2531BE /* libPods-Shiki.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Shiki.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5100F8E83F925A9EEF313C95 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Shiki/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		5837B57C488E85A64A49EE64 /* Pods-Shiki.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shiki.release.xcconfig"; path = "Target Support Files/Pods-Shiki/Pods-Shiki.release.xcconfig"; sourceTree = "<group>"; };
+		73ACB10AFC01AADF7A40A144 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Shiki/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Shiki/SplashScreen.storyboard; sourceTree = "<group>"; };
+		AEF129EF8063A43D61E61837 /* Pods-Shiki.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shiki.debug.xcconfig"; path = "Target Support Files/Pods-Shiki/Pods-Shiki.debug.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		CC312B3A3ADC6ABE55ECC4AD /* libPods-Shiki.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Shiki.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E2F55618012415E2A62D6E34 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Shiki/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EFAB8B0671A0170C8BF2E4CF /* Pods-Shiki.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shiki.release.xcconfig"; path = "Target Support Files/Pods-Shiki/Pods-Shiki.release.xcconfig"; sourceTree = "<group>"; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Shiki/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Shiki-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Shiki-Bridging-Header.h"; path = "Shiki/Shiki-Bridging-Header.h"; sourceTree = "<group>"; };
-		FA8B5F01B2FB40BEEB710752 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Shiki/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AFC4BDBCF7CA61C9B9100B48 /* libPods-Shiki.a in Frameworks */,
+				4577C08DAD16879BD8B4EBE1 /* libPods-Shiki.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				E2F55618012415E2A62D6E34 /* PrivacyInfo.xcprivacy */,
+				73ACB10AFC01AADF7A40A144 /* PrivacyInfo.xcprivacy */,
 			);
 			name = Shiki;
 			sourceTree = "<group>";
@@ -62,27 +62,9 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				CC312B3A3ADC6ABE55ECC4AD /* libPods-Shiki.a */,
+				2E16E080991CE01D0C2531BE /* libPods-Shiki.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		34C8B547A7EB186910ECC0A8 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				3DDF38D219C85F36635EDFCD /* Pods-Shiki.debug.xcconfig */,
-				EFAB8B0671A0170C8BF2E4CF /* Pods-Shiki.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		7AEEDB435F7F9C48BEEC4819 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				C077A0C311C600EABEC3F4FE /* Shiki */,
-			);
-			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -99,8 +81,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				34C8B547A7EB186910ECC0A8 /* Pods */,
-				7AEEDB435F7F9C48BEEC4819 /* ExpoModulesProviders */,
+				C4020D73F7D9340E770F8DC2 /* Pods */,
+				BE6CF5A8CD3D627A64039C14 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -115,6 +97,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8B5B1406EC6C532154285778 /* Shiki */ = {
+			isa = PBXGroup;
+			children = (
+				5100F8E83F925A9EEF313C95 /* ExpoModulesProvider.swift */,
+			);
+			name = Shiki;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -124,12 +114,21 @@
 			path = Shiki/Supporting;
 			sourceTree = "<group>";
 		};
-		C077A0C311C600EABEC3F4FE /* Shiki */ = {
+		BE6CF5A8CD3D627A64039C14 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				FA8B5F01B2FB40BEEB710752 /* ExpoModulesProvider.swift */,
+				8B5B1406EC6C532154285778 /* Shiki */,
 			);
-			name = Shiki;
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		C4020D73F7D9340E770F8DC2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				AEF129EF8063A43D61E61837 /* Pods-Shiki.debug.xcconfig */,
+				5837B57C488E85A64A49EE64 /* Pods-Shiki.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,13 +139,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Shiki" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				1A220534CD1F17624D057054 /* [Expo] Configure project */,
+				71948E8EEA03526C7E90311E /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				29387E2240542AEAA2DEC365 /* [CP] Embed Pods Frameworks */,
+				69B0675BC698FBC202344AB0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +195,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				A02E9A50AB59A2BDC422556D /* PrivacyInfo.xcprivacy in Resources */,
+				DAB0C060334D22E1536F6D5E /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,7 +241,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1A220534CD1F17624D057054 /* [Expo] Configure project */ = {
+		69B0675BC698FBC202344AB0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Shiki/Pods-Shiki-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Shiki/Pods-Shiki-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		71948E8EEA03526C7E90311E /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -265,28 +286,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Shiki/expo-configure-project.sh\"\n";
-		};
-		29387E2240542AEAA2DEC365 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Shiki/Pods-Shiki-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Shiki/Pods-Shiki-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -330,7 +329,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				C6B4A40D11ED61BD78DCBDC7 /* ExpoModulesProvider.swift in Sources */,
+				4166B239CF1BE0A5E800B11A /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,12 +338,13 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3DDF38D219C85F36635EDFCD /* Pods-Shiki.debug.xcconfig */;
+			baseConfigurationReference = AEF129EF8063A43D61E61837 /* Pods-Shiki.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Shiki/Shiki.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V2L5YHDKSP;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -375,12 +375,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EFAB8B0671A0170C8BF2E4CF /* Pods-Shiki.release.xcconfig */;
+			baseConfigurationReference = 5837B57C488E85A64A49EE64 /* Pods-Shiki.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Shiki/Shiki.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V2L5YHDKSP;
 				INFOPLIST_FILE = Shiki/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (

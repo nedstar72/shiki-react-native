@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { action, observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { StatusBar, StyleSheet, Text, useColorScheme } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar, Text, useColorScheme, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, withUnistyles } from 'react-native-unistyles';
 import { createStaticNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
@@ -11,12 +12,15 @@ import { AuthButton } from '@/features/auth';
 
 import TestSVG from './test.svg';
 
-const styles = StyleSheet.create({
+const UniSafeAreaView = withUnistyles(SafeAreaView);
+
+const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
-    padding: 8,
+    padding: theme.gap(1),
+    backgroundColor: theme.colors.background,
   },
-});
+}));
 
 class Timer {
   @observable accessor secondsPassed: number | undefined;
@@ -46,15 +50,13 @@ const TimerComponent = observer(() => {
 
 export function RootScreen() {
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <Text>Hello World! 🚀</Text>
-        <Text>{Constants.deviceName ?? 'Unknown'}</Text>
-        <TimerComponent />
-        <TestSVG width={100} height={100} />
-        <AuthButton />
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <UniSafeAreaView style={styles.container} edges={['bottom']}>
+      <Text>Hello World! 🚀</Text>
+      <Text>{Constants.deviceName ?? 'Unknown'}</Text>
+      <TimerComponent />
+      <TestSVG width={100} height={100} />
+      <AuthButton />
+    </UniSafeAreaView>
   );
 }
 

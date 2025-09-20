@@ -11140,6 +11140,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-edge-to-edge@npm:1.7.0":
+  version: 1.7.0
+  resolution: "react-native-edge-to-edge@npm:1.7.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/809dcf1c68f79cff788963ec7691b37024986e82470be5047bfbe42929fc2c7d45db23eab816321e776f0bb3a8295f7efa526377bce6a559c10681cd409d597d
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:2.28.0":
   version: 2.28.0
   resolution: "react-native-gesture-handler@npm:2.28.0"
@@ -11173,6 +11183,16 @@ __metadata:
     "@react-native-community/datetimepicker": ">=6.7.0"
     react-native: ">=0.65.0"
   checksum: 10c0/2217780609af89f1863971dafcdb9deca33663d863ffd65ef43a4b91357a5b623f91ed4f7730231d29e85ac6e5e9d84c11d4c024a791eea70b2df2c423f30610
+  languageName: node
+  linkType: hard
+
+"react-native-nitro-modules@npm:0.29.6":
+  version: 0.29.6
+  resolution: "react-native-nitro-modules@npm:0.29.6"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/6213ced4aae9100e97e6d90d3cb625afb5b6ff9b9007d6e4a44faa13e5895b60569c6d06f0c40de2ddff8f2cdd06610a3c8e488db1d6d38ec9632709c3110421
   languageName: node
   linkType: hard
 
@@ -11241,6 +11261,23 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/89ba2ed640f78e69d44980473530fdb83e24336a1a43936e19f532e772c41e8532ee1d4f3ae003339e817a3e3b055aa2a8ee3c0da31754cd2c83fa1a81130d6a
+  languageName: node
+  linkType: hard
+
+"react-native-unistyles@npm:3.0.13":
+  version: 3.0.13
+  resolution: "react-native-unistyles@npm:3.0.13"
+  peerDependencies:
+    "@react-native/normalize-colors": "*"
+    react: "*"
+    react-native: ">=0.76.0"
+    react-native-edge-to-edge: "*"
+    react-native-nitro-modules: "*"
+    react-native-reanimated: "*"
+  peerDependenciesMeta:
+    react-native-reanimated:
+      optional: true
+  checksum: 10c0/eaddc8fca5a4cb6265dd121dd4d79c6314feb972aada257de6a46be1d352c8c8a5744e42bac29282573d52369d9638b519932bb7d975c7a372432371e43eeec3
   languageName: node
   linkType: hard
 
@@ -11962,12 +11999,15 @@ __metadata:
     react: "npm:19.1.0"
     react-native: "npm:0.81.4"
     react-native-app-auth: "npm:8.0.3"
+    react-native-edge-to-edge: "npm:1.7.0"
     react-native-gesture-handler: "npm:2.28.0"
+    react-native-nitro-modules: "npm:0.29.6"
     react-native-reanimated: "npm:4.1.0"
     react-native-safe-area-context: "npm:5.6.1"
     react-native-screens: "npm:4.16.0"
     react-native-svg: "npm:15.13.0"
     react-native-svg-transformer: "npm:1.5.1"
+    react-native-unistyles: "npm:3.0.13"
     react-native-worklets: "npm:0.5.1"
     rxjs: "npm:7.8.2"
     storybook: "npm:9.1.7"

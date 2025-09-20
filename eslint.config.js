@@ -54,4 +54,9 @@ module.exports = defineConfig([
       ],
     },
   },
+  {
+    rules: {
+      '@typescript-eslint/no-empty-object-type': 'off',
+    },
+  },
 ]);
