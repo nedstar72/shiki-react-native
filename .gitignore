@@ -51,3 +51,6 @@ expo-env.d.ts
 # GraphQL
 graphql.schema.json
 src/shared/shikimori-api/index.ts
+
+# jest
+/coverage/

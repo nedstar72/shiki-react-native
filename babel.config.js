@@ -1,5 +1,6 @@
 module.exports = function (api) {
   api.cache(true);
+
   return {
     presets: [
       [
@@ -11,6 +12,11 @@ module.exports = function (api) {
         },
       ],
     ],
+    env: {
+      test: {
+        plugins: ['@babel/plugin-transform-class-static-block'],
+      },
+    },
     plugins: [
       [
         'react-native-unistyles/plugin',

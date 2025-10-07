@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { action, observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { StatusBar, Text, useColorScheme, View } from 'react-native';
+import { StatusBar, Text, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, withUnistyles } from 'react-native-unistyles';
 import { createStaticNavigation } from '@react-navigation/native';
@@ -11,6 +10,7 @@ import Constants from 'expo-constants';
 import { AuthButton } from '@/features/auth';
 
 import TestSVG from './test.svg';
+import { Timer } from './Timer';
 
 const UniSafeAreaView = withUnistyles(SafeAreaView);
 
@@ -21,18 +21,6 @@ const styles = StyleSheet.create(theme => ({
     backgroundColor: theme.colors.background,
   },
 }));
-
-class Timer {
-  @observable accessor secondsPassed: number | undefined;
-
-  @action.bound
-  increaseTimer() {
-    if (this.secondsPassed === undefined) {
-      this.secondsPassed = -1;
-    }
-    this.secondsPassed += 1;
-  }
-}
 
 const timer = new Timer();
 
