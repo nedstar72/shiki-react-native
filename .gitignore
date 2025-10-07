@@ -52,5 +52,8 @@ expo-env.d.ts
 graphql.schema.json
 src/shared/shikimori-api/index.ts
 
-# jest
-/coverage/
+# Jest
+coverage/
+
+# Detox
+e2e_artifacts/

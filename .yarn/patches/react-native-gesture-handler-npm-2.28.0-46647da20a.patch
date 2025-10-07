@@ -1,0 +1,12 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index ac149a0e7df5e6ee2a6f839d5fed84c5b24a2175..72f80aca1fc5cc2127c65b45a47052e2d2560c2d 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -187,6 +187,7 @@ android {
+         exclude "**/libreactnative.so"
+         exclude "**/libjsi.so"
+         exclude "**/libc++_shared.so"
++        pickFirst "**/libfbjni.so"
+     }
+ 
+     sourceSets.main {

@@ -94,6 +94,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "0.1.0"
+        testBuildType System.getProperty('testBuildType', 'debug')
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
 
@@ -123,6 +125,7 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             def enablePngCrunchInRelease = findProperty('android.enablePngCrunchInReleaseBuilds') ?: 'true'
             crunchPngs enablePngCrunchInRelease.toBoolean()
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
         }
     }
     packagingOptions {
@@ -157,6 +160,13 @@ android {
 }
 
 dependencies {
+    // Detox
+    androidTestImplementation('com.wix:detox:+')
+    androidTestImplementation('androidx.test.ext:junit:1.2.1')
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.6.1')
+    androidTestImplementation('junit:junit:4.13.2')
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 

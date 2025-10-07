@@ -7,5 +7,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["types/**/*", "src/**/*", ".rnstorybook/**/*"]
+  "include": ["types/**/*", "src/**/*", ".rnstorybook/**/*", "e2e/**/*"]
 }
