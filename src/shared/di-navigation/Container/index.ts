@@ -3,7 +3,7 @@ import type { NavigationProp, ParamListBase, RouteProp } from '@react-navigation
 /**
  * Представляет токен для получения зависимостей из контейнера.
  */
-export type ContainerToken<T> = AbstractConstructor<T> | string;
+export type Token<T> = string | symbol | Constructor<T> | AbstractConstructor<T>;
 
 /**
  * Описывает контракт контейнера зависимостей.
@@ -13,8 +13,15 @@ export type ContainerToken<T> = AbstractConstructor<T> | string;
 export interface Container {
   /**
    * Возвращает зависимость по указанному токену.
+   *
+   * @throws Error Если зависимость не найдена в контейнере.
    */
-  get<T>(token: ContainerToken<T>): T;
+  get<T>(token: Token<T>): T;
+
+  /**
+   * Возвращает зависимость по указанному токену или undefined, если зависимость не найдена.
+   */
+  getSafely<T>(token: Token<T>): T | undefined;
 }
 
 /**

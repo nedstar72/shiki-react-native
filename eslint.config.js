@@ -17,7 +17,7 @@ module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    ignores: ['.expo', 'node_modules'],
+    ignores: ['.expo', 'node_modules', './src/shared/shikimori-api/index.ts'],
   },
   {
     rules: {

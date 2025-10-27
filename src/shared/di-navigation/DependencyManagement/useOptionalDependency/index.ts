@@ -2,7 +2,7 @@ import { useRoute, type ParamListBase, type RouteProp } from '@react-navigation/
 
 import { useCreation } from '@/shared/utils/react';
 
-import type { ContainerToken } from '../../Container';
+import type { Token } from '../../Container';
 import { useContainerRegistry } from '../../ContainerManagement/ContainerRegistryProvider';
 
 type AnyRoute = RouteProp<ParamListBase, string>;
@@ -16,7 +16,7 @@ type AnyRoute = RouteProp<ParamListBase, string>;
  * @param token Токен требуемой зависимости.
  * @returns Экземпляр зависимости или undefined.
  */
-export default function useOptionalDependency<T>(token: ContainerToken<T>): T | undefined {
+export default function useOptionalDependency<T>(token: Token<T>): T | undefined {
   const route = useRoute<AnyRoute>();
   const registry = useContainerRegistry();
   const routeKey = route.key;
@@ -26,10 +26,6 @@ export default function useOptionalDependency<T>(token: ContainerToken<T>): T | 
   }, [registry, routeKey]);
 
   return useCreation(() => {
-    try {
-      return container.get(token);
-    } catch {
-      return undefined;
-    }
+    return container.getSafely(token);
   }, [container, token, routeKey]);
 }

@@ -294,6 +294,7 @@ function createContainer(id: string): TestableContainer {
     params: undefined,
     navigation: undefined,
     get: <T,>() => undefined as unknown as T,
+    getSafely: <T,>() => undefined as unknown as T,
   };
 }
 
@@ -314,6 +315,10 @@ function createContainerClass(): ContainerConstructor<TestableContainer> {
     }
 
     get<T>(): T {
+      return undefined as unknown as T;
+    }
+
+    getSafely<T>(): T | undefined {
       return undefined as unknown as T;
     }
   };

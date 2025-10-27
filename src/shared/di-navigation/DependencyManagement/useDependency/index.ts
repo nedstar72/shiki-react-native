@@ -1,8 +1,9 @@
 import { useRoute, type RouteProp, type ParamListBase } from '@react-navigation/native';
 
+import { isString, isSymbol } from '@/shared/utils/js';
 import { useCreation } from '@/shared/utils/react';
 
-import type { ContainerToken } from '../../Container';
+import type { Token } from '../../Container';
 import { useContainerRegistry } from '../../ContainerManagement/ContainerRegistryProvider';
 
 type AnyRoute = RouteProp<ParamListBase, string>;
@@ -17,7 +18,7 @@ type AnyRoute = RouteProp<ParamListBase, string>;
  * @returns Экземпляр зависимости.
  * @throws Error Если зависимость не найдена в контейнере.
  */
-export default function useDependency<T>(token: ContainerToken<T>): T {
+export default function useDependency<T>(token: Token<T>): T {
   const route = useRoute<AnyRoute>();
   const registry = useContainerRegistry();
   const routeKey = route.key;
@@ -49,7 +50,7 @@ export default function useDependency<T>(token: ContainerToken<T>): T {
  * @param routeKey Ключ текущего маршрута.
  * @returns Обновлённая ошибка.
  */
-function enhanceError(error: unknown, token: ContainerToken<unknown>, routeKey: string): Error {
+function enhanceError(error: unknown, token: Token<unknown>, routeKey: string): Error {
   if (error instanceof Error) {
     if (!error.message) {
       error.message = `Failed to resolve dependency "${tokenToString(token)}" for route "${routeKey}"`;
@@ -68,6 +69,12 @@ function enhanceError(error: unknown, token: ContainerToken<unknown>, routeKey: 
  * @param token Токен зависимости.
  * @returns Человекочитаемое представление токена.
  */
-function tokenToString(token: ContainerToken<unknown>): string {
-  return typeof token === 'string' ? token : (token?.name ?? '<anonymous>');
+function tokenToString(token: Token<unknown>): string {
+  if (isString(token)) {
+    return token;
+  }
+  if (isSymbol(token)) {
+    return token.toString();
+  }
+  return token.name || '<anonymous>';
 }

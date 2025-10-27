@@ -1,7 +1,7 @@
 import { AppRegistry } from 'react-native';
 
-// Configure unistyles
-import '@/shared/themes';
+import 'reflect-metadata';
+import '@/shared/themes'; // Configure unistyles
 
 import { name as appName } from './app.json';
 import { App } from './src/app';
