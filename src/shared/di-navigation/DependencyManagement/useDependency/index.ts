@@ -1,7 +1,7 @@
 import { useRoute, type RouteProp, type ParamListBase } from '@react-navigation/native';
 
 import { isString, isSymbol } from '@/shared/utils/js';
-import { useCreation } from '@/shared/utils/react';
+import { useLazyCreation } from '@/shared/utils/react';
 
 import type { Token } from '../../Container';
 import { useContainerRegistry } from '../../ContainerManagement/ContainerRegistryProvider';
@@ -23,11 +23,11 @@ export default function useDependency<T>(token: Token<T>): T {
   const registry = useContainerRegistry();
   const routeKey = route.key;
 
-  const container = useCreation(() => {
+  const container = useLazyCreation(() => {
     return registry.get(routeKey) ?? registry.getRootContainer();
   }, [registry, routeKey]);
 
-  const dependency = useCreation(() => {
+  const dependency = useLazyCreation(() => {
     try {
       return container.get(token);
     } catch (error) {

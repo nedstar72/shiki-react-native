@@ -10,7 +10,7 @@ import {
 } from '@react-navigation/native';
 
 import { isArray, isObject, isString } from '@/shared/utils/js';
-import { useCreation } from '@/shared/utils/react';
+import { useLazyCreation } from '@/shared/utils/react';
 
 type AnyNavigation = NavigationProp<ParamListBase, string>;
 type AnyRoute = RouteProp<ParamListBase, string>;
@@ -31,7 +31,10 @@ export default function useTrailNavigation<
   const navigation = useNavigation<TNavigation>();
   const route = useRoute<AnyRoute>();
 
-  return useCreation(() => createTailNavigation(navigation, route.key), [navigation, route.key]);
+  return useLazyCreation(
+    () => createTailNavigation(navigation, route.key),
+    [navigation, route.key],
+  );
 }
 
 /**

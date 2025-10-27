@@ -3,7 +3,7 @@ import { createStaticNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { ContainerRegistryProvider } from '@/shared/di-navigation';
-import { useCreation } from '@/shared/utils/react';
+import { useLazyCreation } from '@/shared/utils/react';
 
 import { RootContainer } from './RootContainer';
 import { DetailsScreen } from './screens/Details/DetailsScreen';
@@ -31,7 +31,7 @@ const Navigation = createStaticNavigation(RootStack);
 export function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const rootContainer = useCreation(() => new RootContainer());
+  const rootContainer = useLazyCreation(() => new RootContainer());
 
   return (
     <>
