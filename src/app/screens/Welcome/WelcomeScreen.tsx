@@ -5,14 +5,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, withUnistyles } from 'react-native-unistyles';
 import Constants from 'expo-constants';
 
-import { GreetingService } from '@/app/services/GreetingService';
+import GreetingService from '@/app/services/GreetingService';
 import TestSVG from '@/app/test.svg';
 import { Timer } from '@/app/Timer';
 import { AuthButton } from '@/features/auth';
 
 import { useDependency, useTrailNavigation, withContainer } from '@/shared/di-navigation';
 
-import { WelcomeContainer } from './WelcomeContainer';
+import WelcomeContainer from './WelcomeContainer';
 
 const UniSafeAreaView = withUnistyles(SafeAreaView);
 
@@ -76,7 +76,7 @@ function LegacyExample() {
   );
 }
 
-function WelcomeScreenContent() {
+function WelcomeScreen() {
   const navigation = useTrailNavigation();
   const greetingService = useDependency(GreetingService);
 
@@ -96,4 +96,4 @@ function WelcomeScreenContent() {
   );
 }
 
-export const WelcomeScreen = withContainer(WelcomeContainer)(WelcomeScreenContent);
+export default withContainer(WelcomeContainer)(WelcomeScreen);

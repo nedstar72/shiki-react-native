@@ -1,6 +1,6 @@
-import { GreetingService } from '@/app/services/GreetingService';
+import GreetingService from '@/app/services/GreetingService';
 
-export class DetailsViewModel {
+export default class DetailsViewModel {
   constructor(
     private readonly greetingService: GreetingService,
     private readonly name?: string,

@@ -2,8 +2,8 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 
 import { useDependency, useTrailNavigation, withContainer } from '@/shared/di-navigation';
 
-import { DetailsContainer } from './DetailsContainer';
-import { DetailsViewModel } from './DetailsViewModel';
+import DetailsContainer from './DetailsContainer';
+import DetailsViewModel from './DetailsViewModel';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function DetailsScreenContent() {
+function DetailsScreen() {
   const navigation = useTrailNavigation();
   const viewModel = useDependency(DetailsViewModel);
 
@@ -37,4 +37,4 @@ function DetailsScreenContent() {
   );
 }
 
-export const DetailsScreen = withContainer(DetailsContainer)(DetailsScreenContent);
+export default withContainer(DetailsContainer)(DetailsScreen);

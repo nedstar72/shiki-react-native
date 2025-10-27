@@ -5,9 +5,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ContainerRegistryProvider } from '@/shared/di-navigation';
 import { useLazyCreation } from '@/shared/utils/react';
 
-import { RootContainer } from './RootContainer';
-import { DetailsScreen } from './screens/Details/DetailsScreen';
-import { WelcomeScreen } from './screens/Welcome/WelcomeScreen';
+import RootContainer from './RootContainer';
+import DetailsScreen from './screens/Details/DetailsScreen';
+import WelcomeScreen from './screens/Welcome/WelcomeScreen';
 
 const RootStack = createNativeStackNavigator({
   screens: {
