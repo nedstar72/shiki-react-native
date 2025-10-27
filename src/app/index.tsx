@@ -1,56 +1,28 @@
-import { useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
-import { StatusBar, Text, useColorScheme } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, withUnistyles } from 'react-native-unistyles';
+import { StatusBar, useColorScheme } from 'react-native';
 import { createStaticNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Constants from 'expo-constants';
 
-import { AuthButton } from '@/features/auth';
+import { ContainerRegistryProvider } from '@/shared/di-navigation';
+import { useCreation } from '@/shared/utils/react';
 
-import TestSVG from './test.svg';
-import { Timer } from './Timer';
-
-const UniSafeAreaView = withUnistyles(SafeAreaView);
-
-const styles = StyleSheet.create(theme => ({
-  container: {
-    flex: 1,
-    padding: theme.gap(1),
-    backgroundColor: theme.colors.background,
-  },
-}));
-
-const timer = new Timer();
-
-const TimerComponent = observer(() => {
-  useEffect(() => {
-    timer.increaseTimer();
-    const interval = setInterval(() => {
-      timer.increaseTimer();
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return <Text>{timer.secondsPassed}</Text>;
-});
-
-export function RootScreen() {
-  return (
-    <UniSafeAreaView style={styles.container} edges={['bottom']}>
-      <Text>Hello World! 🚀</Text>
-      <Text>{Constants.deviceName ?? 'Unknown'}</Text>
-      <TimerComponent />
-      <TestSVG width={100} height={100} />
-      <AuthButton />
-    </UniSafeAreaView>
-  );
-}
+import { RootContainer } from './RootContainer';
+import { DetailsScreen } from './screens/Details/DetailsScreen';
+import { WelcomeScreen } from './screens/Welcome/WelcomeScreen';
 
 const RootStack = createNativeStackNavigator({
   screens: {
-    Root: RootScreen,
+    Welcome: {
+      screen: WelcomeScreen,
+      options: {
+        title: 'Главная',
+      },
+    },
+    Details: {
+      screen: DetailsScreen,
+      options: {
+        title: 'Детали',
+      },
+    },
   },
 });
 
@@ -59,10 +31,14 @@ const Navigation = createStaticNavigation(RootStack);
 export function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
+  const rootContainer = useCreation(() => new RootContainer());
+
   return (
     <>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <Navigation />
+      <ContainerRegistryProvider rootContainer={rootContainer}>
+        <Navigation />
+      </ContainerRegistryProvider>
     </>
   );
 }

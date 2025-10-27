@@ -43,7 +43,7 @@ export type ContainerConstructor<
   TParamList extends ParamListBase = ParamListBase,
   TRouteName extends keyof TParamList = string,
 > = new (
-  parent?: Container | null,
-  params?: unknown,
+  parent?: any, // TODO: придумать как подружить типизацию родителей
+  params?: any, // TODO: придумать как связать параметры навигации с контейнером
   navigation?: NavigationContext<TParamList, TRouteName>,
 ) => TContainer;
