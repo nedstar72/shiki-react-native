@@ -1,5 +1,7 @@
-import type { Container, Identifier } from '../../Container';
+import { Container } from '../../Container';
 import DIEngineError from '../../DIEngineError';
+import { Module } from '../../Module';
+import type { Token } from '../../Token';
 
 /**
  * Опции конфигурации предоставления зависимости через декоратор.
@@ -9,35 +11,38 @@ export interface ProvideOptions {
 }
 
 /**
- * Регистрирует getter контейнера как фабрику зависимости.
+ * Регистрирует геттер контейнера или модуля как фабрику зависимости.
  *
- * @param id Идентификатор, под которым будет доступна зависимость.
+ * @param token Идентификатор зависимости.
  * @param options Параметры области жизни создаваемой сущности.
- * @returns Декоратор для getter-метода контейнера.
+ * @returns Декоратор для getter-метода.
  * @throws DIEngineError Если декоратор применён не к getter.
  */
-export function provide<T>(id: Identifier<T>, options?: ProvideOptions) {
-  return function provideGetter<C extends Container>(
-    originalGet: (this: C) => T,
-    context: ClassGetterDecoratorContext<C>,
+export function provide<T>(token: Token<T>, options?: ProvideOptions) {
+  return function provideGetter<Host extends Container | Module>(
+    originalGet: (this: Host) => T,
+    context: ClassGetterDecoratorContext<Host>,
   ) {
     if (context.kind !== 'getter') {
-      throw new DIEngineError(`@provide можно применять только к getter`);
+      throw new DIEngineError(`@provide можно применять только к геттеру`);
     }
 
     const { shared = false } = options ?? {};
 
     context.addInitializer(function () {
-      // this — экземпляр контейнера; регистрируем фабрику,
-      // которая вызовет оригинальный getter на текущем экземпляре.
-      // Для shared берём инверсайвовский singleton scope.
-      // Важно: биндим только если ещё не забиндено (чтобы позволить оверрайды в parent).
-      if (!(this as C).isBound(id)) {
-        (this as C).bind<T>(id, () => originalGet.call(this), shared);
+      if (this instanceof Container) {
+        if (!this.isBound(token)) {
+          this.bind<T>(token, () => originalGet.call(this), shared);
+        }
+
+        return;
+      }
+
+      if (this instanceof Module) {
+        this.bind<T>(token, () => originalGet.call(this), shared);
       }
     });
 
-    // Геттер поведение не меняем, возвращаем исходный.
     return originalGet;
   };
 }

@@ -1,9 +1,7 @@
 import { Container as Ioc } from 'inversify';
 
-/**
- * Универсальный идентификатор зависимости, поддерживающий строки, символы и классы.
- */
-export type Identifier<T> = string | symbol | Constructor<T> | AbstractConstructor<T>;
+import type { Module } from '../Module';
+import type { Token } from '../Token';
 
 /**
  * Обёртка над контейнером Inversify для декларативной регистрации и разрешения зависимостей.
@@ -25,12 +23,12 @@ export class Container {
   /**
    * Регистрирует фабрику зависимости и настраивает для неё область видимости.
    *
-   * @param id Идентификатор зависимости, по которому будет производиться разрешение.
+   * @param token Идентификатор зависимости, по которому будет производиться разрешение.
    * @param factory Фабрика, создающая экземпляр зависимости.
    * @param shared Указывает, что зависимость должна быть singleton в рамках контейнера.
    */
-  bind<T>(id: Identifier<T>, factory: () => T, shared?: boolean) {
-    const binding = this.ioc.bind<T>(id).toDynamicValue(() => factory());
+  bind<T>(token: Token<T>, factory: () => T, shared?: boolean) {
+    const binding = this.ioc.bind<T>(token).toDynamicValue(() => factory());
     if (shared) {
       binding.inSingletonScope();
     }
@@ -39,23 +37,23 @@ export class Container {
   /**
    * Возвращает зарегистрированную зависимость по идентификатору.
    *
-   * @param id Идентификатор зарегистрированной зависимости.
+   * @param token Идентификатор зарегистрированной зависимости.
    * @returns Экземпляр зависимости, созданный соответствующей фабрикой.
    * @throws Error Если зависимость с указанным идентификатором не зарегистрирована.
    */
-  get<T>(id: Identifier<T>): T {
-    return this.ioc.get<T>(id);
+  get<T>(token: Token<T>): T {
+    return this.ioc.get<T>(token);
   }
 
   /**
    * Пытается вернуть зависимость по идентификатору без выбрасывания исключения при отсутствии биндинга.
    *
-   * @param id Идентификатор зависимости, которую требуется получить.
+   * @param token Идентификатор зависимости, которую требуется получить.
    * @returns Экземпляр зависимости или undefined, если биндинг отсутствует.
    */
-  getSafely<T>(id: Identifier<T>): T | undefined {
+  getSafely<T>(token: Token<T>): T | undefined {
     try {
-      return this.ioc.get<T>(id);
+      return this.ioc.get<T>(token);
     } catch {
       return undefined;
     }
@@ -64,10 +62,19 @@ export class Container {
   /**
    * Проверяет, зарегистрирована ли зависимость под указанным идентификатором.
    *
-   * @param id Идентификатор зависимости для проверки.
+   * @param token Идентификатор зависимости для проверки.
    * @returns true, если биндинг существует; иначе false.
    */
-  isBound(id: Identifier<any>): boolean {
-    return this.ioc.isBound(id);
+  isBound(token: Token<any>): boolean {
+    return this.ioc.isBound(token);
+  }
+
+  /**
+   * Загружает один или несколько модулей в контейнер.
+   *
+   * @param modules Модули DIEngine.
+   */
+  load(...modules: Module[]): void {
+    this.ioc.loadSync(...modules.map(module => module.loadable));
   }
 }

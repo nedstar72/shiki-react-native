@@ -1,10 +1,10 @@
-import type { Identifier, Container } from '../../Container';
+import { Container } from '../../Container';
 import DIEngineError from '../../DIEngineError';
+import { Module } from '../../Module';
+import type { Token } from '../../Token';
 
 /**
  * Опции конфигурации разрешения зависимостей через декоратор.
- *
- * Позволяют настроить опциональность и кеширование результата.
  */
 export interface ResolveOptions {
   optional?: boolean;
@@ -12,19 +12,19 @@ export interface ResolveOptions {
 }
 
 /**
- * Связывает accessor контейнера с разрешением зависимости из DI.
+ * Связывает accessor контейнера или модуля с разрешением зависимости из DI.
  *
- * @param id Идентификатор зависимости для разрешения.
+ * @param token Идентификатор зависимости.
  * @param options Параметры поведения доступа к зависимости.
- * @returns Декоратор для TS5 auto-accessor.
+ * @returns Декоратор для TS5 auto-accesor.
  * @throws Error Если декоратор применён не к accessor.
  */
-export function resolve<T, Options extends ResolveOptions>(id: Identifier<T>, options?: Options) {
+export function resolve<T, Options extends ResolveOptions>(token: Token<T>, options?: Options) {
   type Result = Options extends { optional: true } ? T | undefined : T;
 
-  return function resolveAccessor<C extends Container>(
+  return function resolveAccessor<Host extends Container | Module>(
     _unused: unknown,
-    context: ClassAccessorDecoratorContext<C, Result>,
+    context: ClassAccessorDecoratorContext<Host, Result>,
   ) {
     if (context.kind !== 'accessor') {
       throw new Error(`@resolve можно применять только к accessor`);
@@ -37,6 +37,10 @@ export function resolve<T, Options extends ResolveOptions>(id: Identifier<T>, op
     let cachedValue: T | undefined;
 
     context.addInitializer(function () {
+      if (!(this instanceof Container) && !(this instanceof Module)) {
+        return;
+      }
+
       Object.defineProperty(this, name, {
         configurable: false,
         enumerable: true,
@@ -45,7 +49,9 @@ export function resolve<T, Options extends ResolveOptions>(id: Identifier<T>, op
             return cachedValue as Result;
           }
 
-          const value = optional ? (this as C).getSafely<T>(id) : (this as C).get<T>(id);
+          const currentHost = this as Container | Module;
+
+          const value = optional ? currentHost.getSafely<T>(token) : currentHost.get<T>(token);
 
           if (cached) {
             hasCache = true;
@@ -56,12 +62,10 @@ export function resolve<T, Options extends ResolveOptions>(id: Identifier<T>, op
         },
         set: function (_: Result) {
           throw new DIEngineError(
-            `Нельзя присваивать значение в @resolve accessor "${String(name)}"`,
+            `Нельзя присваивать значение в @resolve-аксессор "${String(name)}"`,
           );
         },
       });
     });
-
-    return;
   };
 }

@@ -1,8 +1,9 @@
-import { Container, type Identifier } from './index';
+import { Container } from './index';
+import type { Token } from '../Token';
 
 describe('Container', () => {
   it('должен вызывать фабрику при каждом разрешении для transient-биндинга', () => {
-    const token = Symbol('transient') as Identifier<{ call: number }>;
+    const token = Symbol('transient') as Token<{ call: number }>;
     const container = new Container();
     let call = 0;
     const factory = jest.fn((): { call: number } => ({ call: ++call }));
@@ -19,7 +20,7 @@ describe('Container', () => {
   });
 
   it('должен переиспользовать singleton при shared-биндинге', () => {
-    const token = Symbol('shared') as Identifier<{ call: number }>;
+    const token = Symbol('shared') as Token<{ call: number }>;
     const container = new Container();
     let call = 0;
     const factory = jest.fn((): { call: number } => ({ call: ++call }));
@@ -35,7 +36,7 @@ describe('Container', () => {
   });
 
   it('должен возвращать undefined через getSafely при отсутствии биндинга', () => {
-    const token = Symbol('optional') as Identifier<number>;
+    const token = Symbol('optional') as Token<number>;
     const container = new Container();
 
     expect(container.getSafely(token)).toBeUndefined();
@@ -47,7 +48,7 @@ describe('Container', () => {
   });
 
   it('должен отражать состояние биндинга через isBound', () => {
-    const token = Symbol('isBound') as Identifier<string>;
+    const token = Symbol('isBound') as Token<string>;
     const container = new Container();
 
     expect(container.isBound(token)).toBe(false);
@@ -58,7 +59,7 @@ describe('Container', () => {
   });
 
   it('должен делегировать разрешение родителю и поддерживать локальный override', () => {
-    const token = Symbol('delegation') as Identifier<string>;
+    const token = Symbol('delegation') as Token<string>;
     const parent = new Container();
     parent.bind(token, () => 'from-parent');
 
