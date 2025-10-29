@@ -2,7 +2,7 @@ import { StatusBar, useColorScheme } from 'react-native';
 import { createStaticNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { ContainerRegistryProvider } from '@/shared/di-navigation';
+import { ContainerRegistryProvider } from '@/shared/di-react-native';
 import { useLazyCreation } from '@/shared/utils/react';
 
 import RootContainer from './RootContainer';

@@ -10,7 +10,8 @@ import TestSVG from '@/app/test.svg';
 import { Timer } from '@/app/Timer';
 import { AuthButton } from '@/features/auth';
 
-import { useDependency, useTrailNavigation, withContainer } from '@/shared/di-navigation';
+import { useDependency, withContainer } from '@/shared/di-react-native';
+import { useTrailNavigation } from '@/shared/react-navigation-trail';
 
 import WelcomeContainer from './WelcomeContainer';
 

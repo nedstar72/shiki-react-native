@@ -7,12 +7,12 @@ import {
   type RouteProp,
 } from '@react-navigation/native';
 
+import { SOURCE_PARAM_KEY } from '@/shared/react-navigation-trail';
 import { isNotDefined, isNumber, isObject, isString } from '@/shared/utils/js';
 import { useCreation, useUnmount } from '@/shared/utils/react';
 
 import type { Container, ContainerConstructor } from '../../Container';
 import { useContainerRegistry, type ContainerRegistry } from '../ContainerRegistryProvider';
-import { SOURCE_PARAM_KEY } from '../useTrailNavigation';
 
 type AnyNavigation = NavigationProp<ParamListBase, string>;
 type AnyRoute = RouteProp<ParamListBase, string>;

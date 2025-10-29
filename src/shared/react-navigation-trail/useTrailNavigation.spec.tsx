@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import type { NavigationAction } from '@react-navigation/native';
 import { cleanup, render, waitFor } from '@testing-library/react-native';
 
-import useTrailNavigation, { SOURCE_PARAM_KEY } from './index';
+import { useTrailNavigation, SOURCE_PARAM_KEY } from './index';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),

@@ -25,14 +25,14 @@ export const SOURCE_PARAM_KEY = '@navigation/source';
  *
  * Обогащает вызовы navigate, dispatch, push и replace данными о текущем маршруте.
  */
-export default function useTrailNavigation<
+export function useTrailNavigation<
   TNavigation extends AnyNavigation = AnyNavigation,
 >(): TNavigation {
   const navigation = useNavigation<TNavigation>();
   const route = useRoute<AnyRoute>();
 
   return useLazyCreation(
-    () => createTailNavigation(navigation, route.key),
+    () => createTrailNavigation(navigation, route.key),
     [navigation, route.key],
   );
 }
@@ -42,7 +42,7 @@ export default function useTrailNavigation<
  *
  * Добавляет новые реализации методов, учитывающих источник перехода.
  */
-function createTailNavigation<TNavigation extends AnyNavigation>(
+function createTrailNavigation<TNavigation extends AnyNavigation>(
   navigation: TNavigation,
   sourceKey: string,
 ): TNavigation {

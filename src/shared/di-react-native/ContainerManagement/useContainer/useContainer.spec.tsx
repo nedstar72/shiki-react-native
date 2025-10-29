@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { render, waitFor, cleanup } from '@testing-library/react-native';
 
+import { SOURCE_PARAM_KEY } from '@/shared/react-navigation-trail';
+
 import useContainer from './index';
 import type { Container, ContainerConstructor, NavigationContext } from '../../Container';
-import { SOURCE_PARAM_KEY } from '../useTrailNavigation';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
