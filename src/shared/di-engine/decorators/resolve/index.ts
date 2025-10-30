@@ -12,12 +12,12 @@ export interface ResolveOptions {
 }
 
 /**
- * Связывает accessor контейнера или модуля с разрешением зависимости из DI.
+ * Связывает accessor контейнера или модуля с разрешением зависимости из контейнера или модуля.
  *
  * @param token Идентификатор зависимости.
  * @param options Параметры поведения доступа к зависимости.
  * @returns Декоратор для TS5 auto-accesor.
- * @throws Error Если декоратор применён не к accessor.
+ * @throws DIEngineError Если декоратор применён не к accessor или Container/Module.
  */
 export function resolve<T, Options extends ResolveOptions>(token: Token<T>, options?: Options) {
   type Result = Options extends { optional: true } ? T | undefined : T;
@@ -27,7 +27,7 @@ export function resolve<T, Options extends ResolveOptions>(token: Token<T>, opti
     context: ClassAccessorDecoratorContext<Host, Result>,
   ) {
     if (context.kind !== 'accessor') {
-      throw new Error(`@resolve можно применять только к accessor`);
+      throw new DIEngineError(`@resolve можно применять только к accessor`);
     }
 
     const { name } = context;
@@ -38,7 +38,7 @@ export function resolve<T, Options extends ResolveOptions>(token: Token<T>, opti
 
     context.addInitializer(function () {
       if (!(this instanceof Container) && !(this instanceof Module)) {
-        return;
+        throw new DIEngineError(`@resolve можно применять только к Container или Module`);
       }
 
       Object.defineProperty(this, name, {
@@ -50,8 +50,9 @@ export function resolve<T, Options extends ResolveOptions>(token: Token<T>, opti
           }
 
           const currentHost = this as Container | Module;
-
-          const value = optional ? currentHost.getSafely<T>(token) : currentHost.get<T>(token);
+          const value = optional
+            ? currentHost.getSafelyFromParent<T>(token)
+            : currentHost.getFromParent<T>(token);
 
           if (cached) {
             hasCache = true;

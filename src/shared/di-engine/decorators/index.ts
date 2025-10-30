@@ -1,2 +1,2 @@
-export * from './resolve';
 export * from './provide';
+export * from './resolve';

@@ -11,22 +11,30 @@ describe('@resolve', () => {
   });
 
   describe('Container', () => {
-    it('должен возвращать зависимость через биндинг контейнера', () => {
+    it('должен возвращать зависимость из родительского контейнера', () => {
       const token = Symbol('resolve-basic') as Token<{ call: number }>;
 
-      class ResolveContainer extends Container {
+      class ParentContainer extends Container {
         callCount = 0;
 
         @provide(token)
         get provided() {
           return { call: ++this.callCount };
         }
-
-        @resolve(token)
-        accessor dependency!: { call: number };
       }
 
-      const container = new ResolveContainer();
+      class ResolveContainer extends Container {
+        @resolve(token)
+        accessor dependency!: { call: number };
+
+        @provide(token)
+        get provided() {
+          return { call: -1 };
+        }
+      }
+
+      const parent = new ParentContainer();
+      const container = new ResolveContainer(parent);
 
       const first = container.dependency;
       const second = container.dependency;
@@ -34,23 +42,27 @@ describe('@resolve', () => {
       expect(first).not.toBe(second);
       expect(first.call).toBe(1);
       expect(second.call).toBe(2);
+      expect(parent.callCount).toBe(2);
     });
 
     it('должен кешировать значение при включённом cached', () => {
       const token = Symbol('resolve-cached') as Token<number>;
 
-      class CachedContainer extends Container {
+      class ParentContainer extends Container {
         @provide(token)
         get provided() {
           return Math.random();
         }
+      }
 
+      class CachedContainer extends Container {
         @resolve(token, { cached: true })
         accessor cachedDependency!: number;
       }
 
-      const container = new CachedContainer();
-      const getSpy = jest.spyOn(container, 'get');
+      const parent = new ParentContainer();
+      const container = new CachedContainer(parent);
+      const getSpy = jest.spyOn(parent, 'get');
 
       const first = container.cachedDependency;
       const second = container.cachedDependency;
@@ -59,15 +71,17 @@ describe('@resolve', () => {
       expect(getSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('должен возвращать undefined, если зависимость опциональна и отсутствует', () => {
+    it('должен возвращать undefined, если зависимость опциональна и отсутствует в родительском контейнере', () => {
       const token = Symbol('resolve-optional') as Token<string>;
+
+      class OptionalParent extends Container {}
 
       class OptionalContainer extends Container {
         @resolve(token, { optional: true })
         accessor maybeDependency!: string | undefined;
       }
 
-      const container = new OptionalContainer();
+      const container = new OptionalContainer(new OptionalParent());
 
       expect(container.maybeDependency).toBeUndefined();
     });
@@ -98,22 +112,6 @@ describe('@resolve', () => {
       expect(() => {
         container.dependency = 'value';
       }).toThrow(DIEngineError);
-    });
-
-    it('должен выбрасывать ошибку, если декоратор применён не к accessor', () => {
-      const token = Symbol('resolve-invalid') as Token<string>;
-      const decorator = resolve(token);
-      const fakeContext = {
-        kind: 'method',
-        name: 'invalid',
-        addInitializer: () => {
-          throw new Error('initializer must not run');
-        },
-      } as unknown;
-
-      expect(() =>
-        decorator(undefined, fakeContext as ClassAccessorDecoratorContext<Container, string>),
-      ).toThrow(Error);
     });
   });
 
@@ -230,5 +228,21 @@ describe('@resolve', () => {
         module.dependency = 'value';
       }).toThrow(DIEngineError);
     });
+  });
+
+  it('должен выбрасывать ошибку, если декоратор применён не к accessor', () => {
+    const token = Symbol('resolve-invalid') as Token<string>;
+    const decorator = resolve(token);
+    const fakeContext = {
+      kind: 'method',
+      name: 'invalid',
+      addInitializer: () => {
+        throw new Error('initializer must not run');
+      },
+    } as unknown;
+
+    expect(() =>
+      decorator(undefined, fakeContext as ClassAccessorDecoratorContext<Container, string>),
+    ).toThrow(Error);
   });
 });

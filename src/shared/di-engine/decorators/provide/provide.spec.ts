@@ -10,7 +10,7 @@ describe('@provide', () => {
   });
 
   describe('Container', () => {
-    it('должен регистрировать геттер как transient-фабрику по умолчанию', () => {
+    it('должен регистрировать геттер как transient-зависимость по-умолчанию', () => {
       const token = Symbol('provide-transient') as Token<{ call: number }>;
 
       class TransientContainer extends Container {
@@ -32,7 +32,7 @@ describe('@provide', () => {
       expect(second.call).toBe(2);
     });
 
-    it('должен поддерживать регистрацию singleton при shared: true', () => {
+    it('должен поддерживать регистрацию singleton-зависимости при shared: true', () => {
       const token = Symbol('provide-shared') as Token<{ call: number }>;
 
       class SharedContainer extends Container {
@@ -53,7 +53,7 @@ describe('@provide', () => {
       expect(first.call).toBe(1);
     });
 
-    it('должен пропускать регистрацию, если зависимость уже есть в родителе', () => {
+    it('должен поддерживать переопределение зависимости родителя', () => {
       const token = Symbol('provide-parent') as Token<string>;
 
       class ChildContainer extends Container {
@@ -67,11 +67,11 @@ describe('@provide', () => {
       }
 
       class ParentContainer extends Container {
-        parentCalls = 0;
+        callCount = 0;
 
         @provide(token, { shared: true })
         get provided() {
-          this.parentCalls += 1;
+          this.callCount += 1;
           return 'from-parent';
         }
       }
@@ -79,30 +79,9 @@ describe('@provide', () => {
       const parent = new ParentContainer();
       const child = new ChildContainer(parent);
 
-      expect(child.get(token)).toBe('from-parent');
-      expect(child.callCount).toBe(0);
-      expect(parent.parentCalls).toBe(1);
-    });
-
-    it('должен выбрасывать DIEngineError, если декоратор применён не к геттеру', () => {
-      const token = Symbol('provide-invalid') as Token<string>;
-      const decorator = provide<string>(token);
-      const fakeContext = {
-        kind: 'method',
-        name: 'invalid',
-        addInitializer: () => {
-          throw new Error('initializer must not be called');
-        },
-      } as unknown;
-
-      expect(() =>
-        decorator(
-          function thisShouldNotMatter() {
-            return 'value';
-          },
-          fakeContext as ClassGetterDecoratorContext<Container, string>,
-        ),
-      ).toThrow(DIEngineError);
+      expect(child.get(token)).toBe('from-child');
+      expect(parent.callCount).toBe(0);
+      expect(child.callCount).toBe(1);
     });
   });
 
@@ -131,7 +110,7 @@ describe('@provide', () => {
       expect(second.call).toBe(2);
     });
 
-    it('должен поддерживать singleton при shared: true', () => {
+    it('должен поддерживать регистрацию singleton-зависимости при shared: true', () => {
       const token = Symbol('module-provide-shared') as Token<{ call: number }>;
 
       class SharedModule extends Module {
@@ -188,5 +167,26 @@ describe('@provide', () => {
       expect(module.callCount).toBe(0);
       expect(existingModule.callCount).toBe(1);
     });
+  });
+
+  it('должен выбрасывать DIEngineError, если декоратор применён не к геттеру', () => {
+    const token = Symbol('provide-invalid') as Token<string>;
+    const decorator = provide<string>(token);
+    const fakeContext = {
+      kind: 'method',
+      name: 'invalid',
+      addInitializer: () => {
+        throw new Error('initializer must not be called');
+      },
+    } as unknown;
+
+    expect(() =>
+      decorator(
+        function thisShouldNotMatter() {
+          return 'value';
+        },
+        fakeContext as ClassGetterDecoratorContext<Container, string>,
+      ),
+    ).toThrow(DIEngineError);
   });
 });

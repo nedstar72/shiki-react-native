@@ -1,15 +1,17 @@
-import { Container as Ioc } from 'inversify';
+import { Container as InversifyContainer } from 'inversify';
 
+import DIEngineError from '../DIEngineError';
 import type { Module } from '../Module';
 import type { Token } from '../Token';
 
 /**
  * Обёртка над контейнером Inversify для декларативной регистрации и разрешения зависимостей.
  *
- * Поддерживает вложенные контейнеры и делегирование к родительскому контейнеру при отсутствии биндинга.
+ * Поддерживает вложенные контейнеры и делегирование к родительскому контейнеру при отсутствии локальной зависимости.
  */
 export class Container {
-  private readonly ioc: Ioc;
+  private readonly parent?: Container;
+  private readonly inversifyContainer: InversifyContainer;
 
   /**
    * Создаёт экземпляр контейнера с необязательным родительским контейнером.
@@ -17,7 +19,8 @@ export class Container {
    * @param parent Родительский контейнер для делегирования разрешения зависимостей.
    */
   constructor(parent?: Container) {
-    this.ioc = new Ioc({ parent: parent?.ioc });
+    this.parent = parent;
+    this.inversifyContainer = new InversifyContainer({ parent: parent?.inversifyContainer });
   }
 
   /**
@@ -28,7 +31,7 @@ export class Container {
    * @param shared Указывает, что зависимость должна быть singleton в рамках контейнера.
    */
   bind<T>(token: Token<T>, factory: () => T, shared?: boolean) {
-    const binding = this.ioc.bind<T>(token).toDynamicValue(() => factory());
+    const binding = this.inversifyContainer.bind<T>(token).toDynamicValue(() => factory());
     if (shared) {
       binding.inSingletonScope();
     }
@@ -42,39 +45,65 @@ export class Container {
    * @throws Error Если зависимость с указанным идентификатором не зарегистрирована.
    */
   get<T>(token: Token<T>): T {
-    return this.ioc.get<T>(token);
+    return this.inversifyContainer.get<T>(token);
   }
 
   /**
-   * Пытается вернуть зависимость по идентификатору без выбрасывания исключения при отсутствии биндинга.
+   * Пытается вернуть зависимость по идентификатору без выбрасывания исключения при отсутствии.
    *
    * @param token Идентификатор зависимости, которую требуется получить.
-   * @returns Экземпляр зависимости или undefined, если биндинг отсутствует.
+   * @returns Экземпляр зависимости или undefined, если зависимость отсутствует.
    */
   getSafely<T>(token: Token<T>): T | undefined {
     try {
-      return this.ioc.get<T>(token);
+      return this.inversifyContainer.get<T>(token);
     } catch {
       return undefined;
     }
   }
 
   /**
-   * Проверяет, зарегистрирована ли зависимость под указанным идентификатором.
+   * Разрешает зависимость только через родительский контейнер.
    *
-   * @param token Идентификатор зависимости для проверки.
-   * @returns true, если биндинг существует; иначе false.
+   * @param token Идентификатор зависимости.
+   * @throws DIEngineError Если родительский контейнер отсутствует.
    */
-  isBound(token: Token<any>): boolean {
-    return this.ioc.isBound(token);
+  getFromParent<T>(token: Token<T>): T {
+    if (!this.parent) {
+      throw new DIEngineError(
+        `Родительский контейнер отсутствует: невозможно получить "${String(token)}"`,
+      );
+    }
+
+    return this.parent.get<T>(token);
   }
 
   /**
-   * Загружает один или несколько модулей в контейнер.
+   * Пытается разрешить зависимость только через родительский контейнер.
    *
-   * @param modules Модули DIEngine.
+   * @param token Идентификатор зависимости.
+   * @returns Экземпляр зависимости или undefined, если родительский контейнер отсутствует.
+   */
+  getSafelyFromParent<T>(token: Token<T>): T | undefined {
+    return this.parent?.getSafely<T>(token);
+  }
+
+  /**
+   * Проверяет, зарегистрирована ли зависимость под указанным идентификатором.
+   *
+   * @param token Идентификатор зависимости для проверки.
+   * @returns true, если зависимость существует, иначе false.
+   */
+  isBound(token: Token<any>): boolean {
+    return this.inversifyContainer.isBound(token);
+  }
+
+  /**
+   * Загружает один и более модулей в контейнер.
+   *
+   * @param modules Список модулей для загрузки.
    */
   load(...modules: Module[]): void {
-    this.ioc.loadSync(...modules.map(module => module.loadable));
+    this.inversifyContainer.loadSync(...modules.map(module => module.loadable));
   }
 }

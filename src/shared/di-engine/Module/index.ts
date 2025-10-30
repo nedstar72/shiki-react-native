@@ -13,10 +13,7 @@ type Registration = (options: ContainerModuleLoadOptions) => void;
 export type LoadableModule = ContainerModule;
 
 /**
- * Описывает декларативный модуль DI, загружаемый в Inversify-контейнер.
- *
- * В отличие от контейнера, откладывает регистрацию биндингов до момента загрузки.
- * При разрешении зависимостей поддерживает доступ к текущему `ResolutionContext`.
+ * Обертка над ContainerModule из Inversify для декларативного регистрации зависимостей.
  */
 export class Module {
   private readonly module: LoadableModule;
@@ -42,8 +39,8 @@ export class Module {
    * Регистрирует фабрику зависимости, откладывая фактический биндинг до загрузки модуля.
    *
    * @param token Идентификатор зависимости.
-   * @param factory Фабрика значения, выполняемая внутри активного `ResolutionContext`.
-   * @param shared Определяет, должен ли биндинг быть singleton.
+   * @param factory Фабрика, создающая экземпляр зависимости.
+   * @param shared Указывает, что зависимость должна быть singleton в рамках контейнера.
    */
   bind<T>(token: Token<T>, factory: () => T, shared?: boolean) {
     this.registrations.push(options => {
@@ -62,8 +59,9 @@ export class Module {
   }
 
   /**
-   * Разрешает зависимость через контейнер, связанный с текущим `ResolutionContext`.
+   * Разрешает зависимость через текущий `ResolutionContext`.
    *
+   * @param token Идентификатор зависимости.
    * @throws DIEngineError Если метод вызван вне процесса разрешения.
    */
   get<T>(token: Token<T>): T {
@@ -76,14 +74,34 @@ export class Module {
   }
 
   /**
-   * Безопасно пытается разрешить зависимость, возвращая undefined при отсутствии биндинга.
+   * Безопасно пытается разрешить зависимость, возвращая undefined при отсутствии зависимости.
+   *
+   * @param token Идентификатор зависимости.
    */
   getSafely<T>(token: Token<T>): T | undefined {
-    const context = this.contextStack.current;
-    if (!context) {
+    try {
+      return this.contextStack.current?.get<T>(token);
+    } catch {
       return undefined;
     }
+  }
 
-    return context.get<T>(token, { optional: true });
+  /**
+   * Возвращает зависимость из контейнера, к которому привязан модуль.
+   *
+   * Метод остаётся обёрткой над {@link get}, так как у модуля нет собственного родителя.
+   * Добавлен для унификации API с {@link Container} и поддержки декоратора `@resolve`.
+   */
+  getFromParent<T>(token: Token<T>): T {
+    return this.get(token);
+  }
+
+  /**
+   * Пытается безопасно вернуть зависимость из контейнера, к которому привязан модуль.
+   *
+   * Обёртка над {@link getSafely} для поддержки декоратора `@resolve`.
+   */
+  getSafelyFromParent<T>(token: Token<T>): T | undefined {
+    return this.getSafely(token);
   }
 }
