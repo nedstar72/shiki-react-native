@@ -1,2 +1,2 @@
-export * from './useTrailNavigation';
-export * from './extractSource';
+export { useTrailNavigation, SOURCE_PARAM_KEY } from './useTrailNavigation';
+export { extractSource } from './extractSource';

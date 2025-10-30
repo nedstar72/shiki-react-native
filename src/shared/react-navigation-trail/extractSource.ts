@@ -9,7 +9,7 @@ type AnyRoute = RouteProp<ParamListBase, string>;
 /**
  * Извлекает идентификатор источника из параметров маршрута.
  *
- * Возвращает ключ родительского маршрута, если он передан в параметрах.
+ * Возвращает ключ родительского экрана, если он передан в параметрах.
  */
 export function extractSource(route: AnyRoute): string | undefined {
   const params = route.params;

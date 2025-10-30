@@ -9,7 +9,7 @@ import {
   type RouteProp,
 } from '@react-navigation/native';
 
-import { isArray, isObject, isString } from '@/shared/utils/js';
+import { isArray, isNotDefined, isObject, isString } from '@/shared/utils/js';
 import { useLazyCreation } from '@/shared/utils/react';
 
 type AnyNavigation = NavigationProp<ParamListBase, string>;
@@ -18,17 +18,15 @@ type AnyRoute = RouteProp<ParamListBase, string>;
 type NavigationWithPush = AnyNavigation & { push: (...args: any[]) => unknown };
 type NavigationWithReplace = AnyNavigation & { replace: (...args: any[]) => unknown };
 
-export const SOURCE_PARAM_KEY = '@navigation/source';
+export const SOURCE_PARAM_KEY = '@react-navigation-trail/source';
 
 /**
  * Возвращает обертку над навигацией, добавляющую идентификатор источника в маршруты.
  *
  * Обогащает вызовы navigate, dispatch, push и replace данными о текущем маршруте.
  */
-export function useTrailNavigation<
-  TNavigation extends AnyNavigation = AnyNavigation,
->(): TNavigation {
-  const navigation = useNavigation<TNavigation>();
+export function useTrailNavigation<Navigation extends AnyNavigation = AnyNavigation>(): Navigation {
+  const navigation = useNavigation<Navigation>();
   const route = useRoute<AnyRoute>();
 
   return useLazyCreation(
@@ -38,15 +36,13 @@ export function useTrailNavigation<
 }
 
 /**
- * Создаёт обёрнутую навигацию с добавлением source в маршруты и экшены.
- *
- * Добавляет новые реализации методов, учитывающих источник перехода.
+ * Оборачивает навигацию, переопределяя методы navigate, dispatch, push и replace.
  */
-function createTrailNavigation<TNavigation extends AnyNavigation>(
-  navigation: TNavigation,
+function createTrailNavigation<Navigation extends AnyNavigation>(
+  navigation: Navigation,
   sourceKey: string,
-): TNavigation {
-  const trailNavigation: TNavigation = {
+): Navigation {
+  const trailNavigation: Navigation = {
     ...navigation,
     navigate: createNavigateWrapper(navigation, sourceKey),
     dispatch: createDispatchWrapper(navigation, sourceKey),
@@ -82,18 +78,14 @@ function createNavigateWrapper(navigation: AnyNavigation, sourceKey: string) {
         Record<string, unknown> | undefined,
         Record<string, unknown> | undefined,
       ];
-      return navigation.navigate(
-        name,
-        augmentParams(params, sourceKey) as object | undefined,
-        options as { merge?: boolean; pop?: boolean } | undefined,
-      );
+      return navigation.navigate(name, augmentParams(params, sourceKey), options);
     }
 
     if (isObject(args[0])) {
       const [payload] = args as [Record<string, unknown>];
       return navigation.navigate({
         ...payload,
-        params: augmentParams(payload.params, sourceKey) as object | undefined,
+        params: augmentParams(payload.params, sourceKey),
       } as Parameters<AnyNavigation['navigate']>[0]);
     }
 
@@ -110,14 +102,14 @@ function createPushWrapper(navigation: NavigationWithPush, sourceKey: string) {
   return function push(...args: unknown[]) {
     if (isString(args[0])) {
       const [name, params] = args as [string, Record<string, unknown> | undefined];
-      return navigation.push(name, augmentParams(params, sourceKey) as object | undefined);
+      return navigation.push(name, augmentParams(params, sourceKey));
     }
 
     if (isObject(args[0])) {
       const [payload] = args as [Record<string, unknown>];
       return navigation.push({
         ...payload,
-        params: augmentParams(payload.params, sourceKey) as object | undefined,
+        params: augmentParams(payload.params, sourceKey),
       } as Parameters<NavigationWithPush['push']>[0]);
     }
 
@@ -134,14 +126,14 @@ function createReplaceWrapper(navigation: NavigationWithReplace, sourceKey: stri
   return function replace(...args: unknown[]) {
     if (isString(args[0])) {
       const [name, params] = args as [string, Record<string, unknown> | undefined];
-      return navigation.replace(name, augmentParams(params, sourceKey) as object | undefined);
+      return navigation.replace(name, augmentParams(params, sourceKey));
     }
 
     if (isObject(args[0])) {
       const [payload] = args as [Record<string, unknown>];
       return navigation.replace({
         ...payload,
-        params: augmentParams(payload.params, sourceKey) as object | undefined,
+        params: augmentParams(payload.params, sourceKey),
       } as Parameters<NavigationWithReplace['replace']>[0]);
     }
 
@@ -212,7 +204,7 @@ function augmentState<
   return {
     ...state,
     routes,
-  } as TState;
+  };
 }
 
 /**
@@ -225,13 +217,11 @@ function augmentRoute<TRoute>(route: TRoute, sourceKey: string): TRoute {
     return route;
   }
 
-  const next = {
+  return {
     ...route,
     params: augmentParams(route.params, sourceKey),
     state: augmentState(route.state as any, sourceKey),
   };
-
-  return next as TRoute;
 }
 
 /**
@@ -240,7 +230,7 @@ function augmentRoute<TRoute>(route: TRoute, sourceKey: string): TRoute {
  * Поддерживает вложенные параметры, состояния и маршруты.
  */
 function augmentParams<T>(params: T, sourceKey: string): T {
-  if (params == null) {
+  if (isNotDefined(params)) {
     return { [SOURCE_PARAM_KEY]: sourceKey } as T;
   }
 
@@ -253,7 +243,7 @@ function augmentParams<T>(params: T, sourceKey: string): T {
     [SOURCE_PARAM_KEY]: sourceKey,
   };
 
-  if ('params' in next) {
+  if ('screen' in next || 'params' in next) {
     next.params = augmentParams(next.params, sourceKey);
   }
 

@@ -125,8 +125,6 @@ describe('useTrailNavigation', () => {
       },
     };
 
-    const copy = JSON.parse(JSON.stringify(action));
-
     navigation.dispatch(action);
 
     const dispatched = navigationMock.dispatch.mock.calls[0][0] as NavigationAction;
@@ -139,8 +137,24 @@ describe('useTrailNavigation', () => {
     );
     expect(payload?.actions?.[0]?.payload?.params?.[SOURCE_PARAM_KEY]).toBe('origin-route');
     expect(payload?.state?.routes?.[0]?.params?.[SOURCE_PARAM_KEY]).toBe('origin-route');
+  });
 
-    expect(copy.payload.params).not.toHaveProperty(SOURCE_PARAM_KEY);
+  it('должен добавлять source при navigate в nested screen', async () => {
+    const navigationMock = mockNavigation('nested-route');
+    const navigation = await renderHookAndGetNavigation();
+
+    const params = { screen: 'Settings' };
+    navigation.navigate('Home', params);
+
+    expect(navigationMock.navigate).toHaveBeenCalledWith(
+      'Home',
+      {
+        screen: 'Settings',
+        params: { [SOURCE_PARAM_KEY]: 'nested-route' },
+        [SOURCE_PARAM_KEY]: 'nested-route',
+      },
+      undefined,
+    );
   });
 });
 
