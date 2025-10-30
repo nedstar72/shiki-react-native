@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { render, waitFor, cleanup } from '@testing-library/react-native';
+import { cleanup, render, waitFor } from '@testing-library/react-native';
 
 import { SOURCE_PARAM_KEY } from '@/shared/react-navigation-trail';
 
 import useContainer from './index';
-import type { Container, ContainerConstructor, NavigationContext } from '../../Container';
+import type { Container, NavigationContext } from '../../Container';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
@@ -13,6 +13,10 @@ jest.mock('@react-navigation/native', () => ({
 
 jest.mock('../ContainerRegistryProvider', () => ({
   useContainerRegistry: jest.fn(),
+}));
+
+jest.mock('../ContainerContext', () => ({
+  useContainerContext: jest.fn(),
 }));
 
 const { useNavigation } = jest.requireMock('@react-navigation/native') as {
@@ -24,6 +28,9 @@ const { useRoute } = jest.requireMock('@react-navigation/native') as {
 const { useContainerRegistry } = jest.requireMock('../ContainerRegistryProvider') as {
   useContainerRegistry: jest.Mock;
 };
+const { useContainerContext } = jest.requireMock('../ContainerContext') as {
+  useContainerContext: jest.Mock;
+};
 
 type NavigationStateLike = {
   routes: RouteLike[];
@@ -32,6 +39,7 @@ type NavigationStateLike = {
 
 type RouteLike = {
   key: string;
+  params?: Record<string, unknown>;
   state?: NavigationStateLike;
 };
 
@@ -43,40 +51,47 @@ type TestableContainer = Container & {
 };
 
 describe('useContainer', () => {
+  beforeEach(() => {
+    useContainerContext.mockReturnValue(null);
+  });
+
   afterEach(() => {
     jest.resetAllMocks();
     cleanup();
   });
 
-  it('должен возвращать уже зарегистрированный контейнер по key текущего route', async () => {
+  it('должен использовать контейнер из контекста текущего маршрута', async () => {
     const routeKey = 'route-current';
 
     mockRoute({ key: routeKey });
     mockNavigation({ state: { routes: [{ key: routeKey }], index: 0 } });
 
-    const existingContainer = createContainer('existing');
-    const registry = mockRegistry({
-      get: jest.fn(key => (key === routeKey ? existingContainer : undefined)),
-    });
+    const contextContainer = createContainer('context');
+    useContainerContext.mockReturnValue({ container: contextContainer, routeKey });
+
+    const registry = mockRegistry();
 
     const onContainer = jest.fn();
+
     render(<HookConsumer onContainer={onContainer} />);
 
     await waitFor(() => {
-      expect(onContainer).toHaveBeenCalledWith(existingContainer);
+      expect(onContainer).toHaveBeenCalledWith(contextContainer);
     });
 
+    expect(registry.get).not.toHaveBeenCalled();
     expect(registry.register).not.toHaveBeenCalled();
     expect(registry.unregister).not.toHaveBeenCalled();
   });
 
-  it('должен создавать контейнер на основе класса и родителя из source', async () => {
+  it('должен использовать контейнер текущего маршрута, если нет контейнера из подходящего контекста', async () => {
+    useContainerContext.mockReturnValue(null);
+
     const routeKey = 'child-route';
     const parentKey = 'parent-route';
-    const params = { [SOURCE_PARAM_KEY]: parentKey, value: 42 };
 
-    const route = mockRoute({ key: routeKey, params });
-    const navigation = mockNavigation({ state: { routes: [{ key: routeKey }], index: 0 } });
+    mockRoute({ key: routeKey, params: { [SOURCE_PARAM_KEY]: parentKey } });
+    mockNavigation({ state: { routes: [{ key: routeKey }], index: 0 } });
 
     const parentContainer = createContainer('parent');
     const registry = mockRegistry({
@@ -91,36 +106,36 @@ describe('useContainer', () => {
       }),
     });
 
-    const ContainerClass = createContainerClass();
     const onContainer = jest.fn();
-
-    render(<HookConsumer onContainer={onContainer} containerClass={ContainerClass} />);
+    render(<HookConsumer onContainer={onContainer} />);
 
     await waitFor(() => {
-      expect(onContainer).toHaveBeenCalled();
+      expect(onContainer).toHaveBeenCalledWith(parentContainer);
     });
 
-    const createdContainer: TestableContainer = onContainer.mock.lastCall[0];
-    expect(createdContainer).toBeInstanceOf(ContainerClass);
-    expect(createdContainer.parent).toBe(parentContainer);
-    expect(createdContainer.params).toBe(params);
-    expect(createdContainer.navigation?.navigation).toBe(navigation);
-    expect(createdContainer.navigation?.route).toEqual(route);
-
-    expect(registry.register).toHaveBeenCalledWith(routeKey, createdContainer);
+    expect(registry.get).toHaveBeenNthCalledWith(1, routeKey);
+    expect(registry.get).toHaveBeenNthCalledWith(2, parentKey);
+    expect(registry.register).not.toHaveBeenCalled();
   });
 
-  it('должен возвращать контейнер родителя, если класс не передан', async () => {
+  it('должен использовать родительский контейнер, если нет подходящего контекста и контейнера текущего маршрута', async () => {
     const routeKey = 'child-route';
     const parentKey = 'parent-route';
-    const params = { [SOURCE_PARAM_KEY]: parentKey };
 
-    mockRoute({ key: routeKey, params });
+    mockRoute({ key: routeKey, params: { [SOURCE_PARAM_KEY]: parentKey } });
     mockNavigation({ state: { routes: [{ key: routeKey }], index: 0 } });
 
     const parentContainer = createContainer('parent');
     const registry = mockRegistry({
-      get: jest.fn(key => (key === parentKey ? parentContainer : undefined)),
+      get: jest.fn(key => {
+        if (key === routeKey) {
+          return undefined;
+        }
+        if (key === parentKey) {
+          return parentContainer;
+        }
+        return undefined;
+      }),
     });
 
     const onContainer = jest.fn();
@@ -130,10 +145,12 @@ describe('useContainer', () => {
       expect(onContainer).toHaveBeenCalledWith(parentContainer);
     });
 
-    expect(registry.register).toHaveBeenCalledWith(routeKey, parentContainer);
+    expect(registry.get).toHaveBeenNthCalledWith(1, routeKey);
+    expect(registry.get).toHaveBeenNthCalledWith(2, parentKey);
+    expect(registry.register).not.toHaveBeenCalled();
   });
 
-  it('должен искать ближайший контейнер в текущем стеке навигации, если source отсутствует', async () => {
+  it('должен использовать ближайший контейнер по состоянию навигации', async () => {
     const routeKey = 'current-route';
     const siblingRouteKey = 'sibling-route';
 
@@ -153,7 +170,6 @@ describe('useContainer', () => {
         }
         return undefined;
       }),
-      getRootContainer: jest.fn(),
     });
 
     const onContainer = jest.fn();
@@ -163,11 +179,10 @@ describe('useContainer', () => {
       expect(onContainer).toHaveBeenCalledWith(siblingContainer);
     });
 
-    expect(registry.register).toHaveBeenCalledWith(routeKey, siblingContainer);
-    expect(registry.getRootContainer).not.toHaveBeenCalled();
+    expect(registry.register).not.toHaveBeenCalled();
   });
 
-  it('должен искать ближайший контейнер в родительском стеке навигации, если source отсутствует и нет контейнера в текущем стеке', async () => {
+  it('должен использовать контейнер в родительском стеке навигации, если в текущем стеке контейнера нет', async () => {
     const routeKey = 'current-screen';
     const siblingRouteKey = 'sibling-screen';
 
@@ -206,11 +221,10 @@ describe('useContainer', () => {
       expect(onContainer).toHaveBeenCalledWith(siblingContainer);
     });
 
-    expect(registry.register).toHaveBeenCalledWith(routeKey, siblingContainer);
-    expect(registry.getRootContainer).not.toHaveBeenCalled();
+    expect(registry.register).not.toHaveBeenCalled();
   });
 
-  it('должен использовать корневой контейнер, если не найден ни один контейнер по навигации', async () => {
+  it('должен возвращать корневой контейнер, если никаких других контейнеров не найдено', async () => {
     const routeKey = 'current-screen';
 
     const currentStackState: NavigationStateLike = {
@@ -246,40 +260,13 @@ describe('useContainer', () => {
       expect(onContainer).toHaveBeenCalledWith(rootContainer);
     });
 
-    expect(registry.register).toHaveBeenCalledWith(routeKey, rootContainer);
+    expect(registry.register).not.toHaveBeenCalled();
     expect(registry.getRootContainer).toHaveBeenCalledTimes(1);
-  });
-
-  it('должен разрегистрировать контейнер при размонтировании', async () => {
-    const routeKey = 'route-current';
-
-    mockRoute({ key: routeKey });
-    mockNavigation({ state: { routes: [{ key: routeKey }], index: 0 } });
-
-    const registry = mockRegistry({
-      get: jest.fn(() => undefined),
-    });
-
-    const ContainerClass = createContainerClass();
-    const onContainer = jest.fn();
-    const { unmount } = render(
-      <HookConsumer onContainer={onContainer} containerClass={ContainerClass} />,
-    );
-
-    unmount();
-
-    expect(registry.unregister).toHaveBeenCalledWith(routeKey);
   });
 });
 
-function HookConsumer({
-  containerClass,
-  onContainer,
-}: {
-  containerClass?: ContainerConstructor<Container>;
-  onContainer: (container: Container) => void;
-}) {
-  const container = useContainer(containerClass);
+function HookConsumer({ onContainer }: { onContainer: (container: Container) => void }) {
+  const container = useContainer();
 
   useEffect(() => {
     onContainer(container);
@@ -299,40 +286,8 @@ function createContainer(id: string): TestableContainer {
   };
 }
 
-function createContainerClass(): ContainerConstructor<TestableContainer> {
-  return class TestContainer implements TestableContainer {
-    public parent?: Container | null;
-
-    public params?: unknown;
-
-    public navigation?: NavigationContext;
-
-    public id?: string;
-
-    constructor(parent?: Container | null, params?: unknown, navigation?: NavigationContext) {
-      this.parent = parent ?? null;
-      this.params = params;
-      this.navigation = navigation;
-    }
-
-    get<T>(): T {
-      return undefined as unknown as T;
-    }
-
-    getSafely<T>(): T | undefined {
-      return undefined as unknown as T;
-    }
-  };
-}
-
-function mockRoute({ key, params }: { key: string; params?: Record<string, unknown> }) {
-  const route = {
-    key,
-    params,
-  };
-
+function mockRoute(route: RouteLike) {
   useRoute.mockReturnValue(route);
-
   return route;
 }
 

@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 
 import type { Container, ContainerConstructor } from '../../Container';
-import useContainer from '../useContainer';
+import { ContainerProvider } from '../ContainerContext';
 
 /**
  * Возвращает HOC, подключающий контейнер к текущему маршруту навигации.
@@ -11,8 +11,11 @@ import useContainer from '../useContainer';
 export function withContainer<T extends Container>(ContainerClass: ContainerConstructor<T>) {
   return (Component: ComponentType) => {
     function WithContainer(props: UnknownObject) {
-      useContainer(ContainerClass);
-      return <Component {...props} />;
+      return (
+        <ContainerProvider containerClass={ContainerClass}>
+          <Component {...props} />
+        </ContainerProvider>
+      );
     }
 
     WithContainer.displayName = `withContainer(${Component.displayName ?? Component.name ?? 'Component'})`;

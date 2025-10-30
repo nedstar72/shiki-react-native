@@ -1,14 +1,10 @@
-import { useRoute, type ParamListBase, type RouteProp } from '@react-navigation/native';
-
 import { useLazyCreation } from '@/shared/utils/react';
 
 import type { Token } from '../../Container';
-import { useContainerRegistry } from '../../ContainerManagement/ContainerRegistryProvider';
-
-type AnyRoute = RouteProp<ParamListBase, string>;
+import { useContainer } from '../../ContainerManagement';
 
 /**
- * Возвращает необязательную зависимость из контейнера текущего маршрута.
+ * Возвращает необязательную зависимость из контейнера.
  *
  * При отсутствии зависимости возвращает undefined, не выбрасывая исключение.
  *
@@ -17,15 +13,9 @@ type AnyRoute = RouteProp<ParamListBase, string>;
  * @returns Экземпляр зависимости или undefined.
  */
 export default function useOptionalDependency<T>(token: Token<T>): T | undefined {
-  const route = useRoute<AnyRoute>();
-  const registry = useContainerRegistry();
-  const routeKey = route.key;
-
-  const container = useLazyCreation(() => {
-    return registry.get(routeKey) ?? registry.getRootContainer();
-  }, [registry, routeKey]);
+  const container = useContainer();
 
   return useLazyCreation(() => {
     return container.getSafely(token);
-  }, [container, token, routeKey]);
+  }, [container, token]);
 }
