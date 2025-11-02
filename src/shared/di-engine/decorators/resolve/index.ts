@@ -22,6 +22,8 @@ export interface ResolveOptions {
 export function resolve<T, Options extends ResolveOptions>(token: Token<T>, options?: Options) {
   type Result = Options extends { optional: true } ? T | undefined : T;
 
+  const cacheMap = new WeakMap<object, T | undefined>();
+
   return function resolveAccessor<Host extends Container | Module>(
     _unused: unknown,
     context: ClassAccessorDecoratorContext<Host, Result>,
@@ -33,9 +35,6 @@ export function resolve<T, Options extends ResolveOptions>(token: Token<T>, opti
     const { name } = context;
     const { optional = false, cached = false } = options ?? {};
 
-    let hasCache = false;
-    let cachedValue: T | undefined;
-
     context.addInitializer(function () {
       if (!(this instanceof Container) && !(this instanceof Module)) {
         throw new DIEngineError(`@resolve можно применять только к Container или Module`);
@@ -45,8 +44,8 @@ export function resolve<T, Options extends ResolveOptions>(token: Token<T>, opti
         configurable: false,
         enumerable: true,
         get: function (): Result {
-          if (cached && hasCache) {
-            return cachedValue as Result;
+          if (cached && cacheMap.has(this)) {
+            return cacheMap.get(this) as Result;
           }
 
           const currentHost = this as Container | Module;
@@ -55,8 +54,7 @@ export function resolve<T, Options extends ResolveOptions>(token: Token<T>, opti
             : currentHost.getFromParent<T>(token);
 
           if (cached) {
-            hasCache = true;
-            cachedValue = value;
+            cacheMap.set(this, value);
           }
 
           return value as Result;

@@ -113,6 +113,39 @@ describe('@resolve', () => {
         container.dependency = 'value';
       }).toThrow(DIEngineError);
     });
+
+    it('должен иметь независимый кэш между разными экземплярами', () => {
+      const token = Symbol('resolve-cached-per-instance') as Token<{ id: number }>;
+
+      class Parent extends Container {
+        call = 0;
+
+        @provide(token)
+        get dep() {
+          return { id: ++this.call };
+        }
+      }
+
+      class Child extends Container {
+        @resolve(token, { cached: true })
+        accessor dep!: { id: number };
+      }
+
+      const parent = new Parent();
+      const a = new Child(parent);
+      const b = new Child(parent);
+
+      const a1 = a.dep;
+      const a2 = a.dep;
+      const b1 = b.dep;
+      const b2 = b.dep;
+
+      // Каждый экземпляр должен получить свой первый вызов
+      expect(a1).toBe(a2);
+      expect(b1).toBe(b2);
+      expect(a1.id).toBe(1);
+      expect(b1.id).toBe(2);
+    });
   });
 
   describe('Module', () => {
@@ -244,5 +277,59 @@ describe('@resolve', () => {
     expect(() =>
       decorator(undefined, fakeContext as ClassAccessorDecoratorContext<Container, string>),
     ).toThrow(Error);
+  });
+
+  it('должен иметь независимый кэш между разными экземплярами Module', () => {
+    const depToken = Symbol('module-resolve-cached-per-instance-dep') as Token<{ id: number }>;
+    const svcToken = Symbol('module-resolve-cached-per-instance-svc') as Token<{
+      a: number;
+      b: number;
+    }>;
+
+    class DepModule extends Module {
+      seq = 0;
+
+      @provide(depToken)
+      get dep() {
+        return { id: ++this.seq };
+      }
+    }
+
+    class ConsumerA extends Module {
+      @resolve(depToken, { cached: true })
+      accessor dep!: { id: number };
+
+      @provide(svcToken)
+      get svc() {
+        return { a: this.dep.id, b: this.dep.id };
+      }
+    }
+
+    class ConsumerB extends Module {
+      @resolve(depToken, { cached: true })
+      accessor dep!: { id: number };
+
+      @provide(svcToken)
+      get svc() {
+        return { a: this.dep.id, b: this.dep.id };
+      }
+    }
+
+    const container = new Container();
+    const dep = new DepModule();
+    const a = new ConsumerA();
+    const b = new ConsumerB();
+
+    container.load(dep, a);
+    const { a: a1, b: a2 } = container.get(svcToken);
+    expect(a1).toBe(1);
+    expect(a2).toBe(1);
+
+    // Подключаем второй модуль-потребитель отдельно — его кэш не должен "подхватить" значение из A
+    const container2 = new Container();
+    container2.load(dep, b);
+    const { a: b1, b: b2 } = container2.get(svcToken);
+    expect(b1).toBe(2);
+    expect(b2).toBe(2);
   });
 });
