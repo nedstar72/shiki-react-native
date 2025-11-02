@@ -41,9 +41,9 @@
     "@react-native-community/slider": "5.1.0",
     "@react-navigation/native": "7.1.19",
     "@react-navigation/native-stack": "7.6.2",
-    "@storybook/addon-ondevice-actions": "9.1.4",
-    "@storybook/addon-ondevice-controls": "9.1.4",
-    "@storybook/react-native": "9.1.4",
+    "@storybook/addon-ondevice-actions": "10.0.1",
+    "@storybook/addon-ondevice-controls": "10.0.1",
+    "@storybook/react-native": "10.0.1",
     "expo": "54.0.21",
     "expo-constants": "18.0.10",
     "expo-splash-screen": "31.0.10",
@@ -91,7 +91,7 @@
     "lint-staged": "16.2.6",
     "prettier": "3.6.2",
     "react-native-svg-transformer": "1.5.1",
-    "storybook": "9.1.16",
+    "storybook": "10.0.2",
     "typescript": "5.9.3"
   },
   "engines": {
