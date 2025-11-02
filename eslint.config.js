@@ -4,8 +4,11 @@ const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommen
 
 const EXTERNAL_IMPORT_ORDER = [
   'react',
+  'rxjs',
   'mobx',
   'mobx-react-lite',
+  'mobx-utils',
+  'immer',
   'react-native',
   'react-native-**',
   '@react-navigation/**',

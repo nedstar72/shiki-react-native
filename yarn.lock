@@ -9202,6 +9202,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immer@npm:10.2.0":
+  version: 10.2.0
+  resolution: "immer@npm:10.2.0"
+  checksum: 10c0/35e66b0585b2aec4e85ae7a993f049405f170799ba89d79205bc3fdae2c5bdaa2b1d35f62803d8beee42b7e85c7f7315a6e93b6a5a510c5a46f03dbe63619e87
+  languageName: node
+  linkType: hard
+
 "immutable@npm:~3.7.6":
   version: 3.7.6
   resolution: "immutable@npm:3.7.6"
@@ -11755,6 +11762,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mobx-utils@npm:6.1.1":
+  version: 6.1.1
+  resolution: "mobx-utils@npm:6.1.1"
+  peerDependencies:
+    mobx: ^6.0.0
+  checksum: 10c0/85de1f4b4b7854db6a27d28211a507bf937e9c25f0052eb913fed344c69f6b293153bb658971c0b8495d9a23571770215232e1df22ed54cae6b79e08bfab12a2
+  languageName: node
+  linkType: hard
+
 "mobx@npm:6.15.0":
   version: 6.15.0
   resolution: "mobx@npm:6.15.0"
@@ -13946,6 +13962,7 @@ __metadata:
     expo-splash-screen: "npm:31.0.10"
     expo-system-ui: "npm:6.0.8"
     graphql: "npm:16.11.0"
+    immer: "npm:10.2.0"
     inversify: "npm:7.10.3"
     jest: "npm:29.7.0"
     jest-expo: "npm:54.0.13"
@@ -13953,6 +13970,7 @@ __metadata:
     lint-staged: "npm:16.2.6"
     mobx: "npm:6.15.0"
     mobx-react-lite: "npm:4.1.1"
+    mobx-utils: "npm:6.1.1"
     prettier: "npm:3.6.2"
     react: "npm:19.1.0"
     react-native: "npm:0.81.5"
