@@ -60,7 +60,7 @@ export class EffectsBuilder<A extends Actions> {
     this.effects.push({
       kind: 'action',
       type: typeOrHandler as T,
-      factory: handler as ActionEffectFactory<A, ActionType<A>>,
+      factory: handler as unknown as ActionEffectFactory<A, ActionType<A>>,
     });
 
     return this;

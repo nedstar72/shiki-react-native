@@ -5,15 +5,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, withUnistyles } from 'react-native-unistyles';
 import Constants from 'expo-constants';
 
-import GreetingService from '@/app/services/GreetingService';
-import TestSVG from '@/app/test.svg';
-import { Timer } from '@/app/Timer';
-import { AuthButton } from '@/features/auth';
-
-import { useDependency, withContainer } from '@/shared/di-react-native';
 import { useTrailNavigation } from '@/shared/react-navigation-trail';
 
-import WelcomeContainer from './WelcomeContainer';
+import TestSVG from './test.svg';
+import { Timer } from './Timer';
 
 const UniSafeAreaView = withUnistyles(SafeAreaView);
 
@@ -25,7 +20,7 @@ const styles = StyleSheet.create(theme => ({
     backgroundColor: theme.colors.background,
   },
   greetingSection: {
-    gap: theme.gap(1),
+    gap: theme.gap(8),
   },
   title: {
     fontSize: 24,
@@ -72,29 +67,23 @@ function LegacyExample() {
       <View style={styles.svgWrapper}>
         <TestSVG width={100} height={100} />
       </View>
-      <AuthButton />
+      {/* <AuthButton /> */}
     </View>
   );
 }
 
-function WelcomeScreen() {
+export function MainScreen() {
   const navigation = useTrailNavigation();
-  const greetingService = useDependency(GreetingService);
 
   return (
     <UniSafeAreaView style={styles.container} edges={['bottom']}>
       <View style={styles.greetingSection}>
-        <Text style={styles.title}>{greetingService.greet()}</Text>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title={'К деталям'}
-            onPress={() => navigation.navigate('Details', { userName: 'Shiki' })}
-          />
-        </View>
+        <Button title={'Авторизация'} onPress={() => navigation.navigate('Auth')} />
+      </View>
+      <View style={styles.greetingSection}>
+        <Button title={'Список аниме'} onPress={() => navigation.navigate('AnimeList')} />
       </View>
       <LegacyExample />
     </UniSafeAreaView>
   );
 }
-
-export default withContainer(WelcomeContainer)(WelcomeScreen);

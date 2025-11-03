@@ -54,4 +54,21 @@ describe('useDisposable', () => {
 
     expect(instance.dispose).toHaveBeenCalledTimes(1);
   });
+
+  it('должен откладывать освобождение ресурса пока остаются держатели', () => {
+    const sharedDisposable: Disposable = { dispose: jest.fn() };
+
+    const firstHook = renderHook<Disposable, void>(() => useDisposable(sharedDisposable));
+    const secondHook = renderHook<Disposable, void>(() => useDisposable(sharedDisposable));
+
+    expect(sharedDisposable.dispose).not.toHaveBeenCalled();
+
+    firstHook.unmount();
+
+    expect(sharedDisposable.dispose).not.toHaveBeenCalled();
+
+    secondHook.unmount();
+
+    expect(sharedDisposable.dispose).toHaveBeenCalledTimes(1);
+  });
 });

@@ -1,0 +1,1 @@
+export { AuthViewModel } from './AuthViewModel';

@@ -87,9 +87,9 @@ describe('@bind', () => {
       // @ts-expect-error
       m = () => 'pre-set';
 
-      // eslint-disable-next-line @typescript-eslint/no-dupe-class-members
       @bind()
       // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-dupe-class-members
       m(_: never): never {
         throw new Error('не должен вызываться');
       }

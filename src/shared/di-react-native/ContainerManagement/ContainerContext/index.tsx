@@ -8,7 +8,7 @@ import {
 } from '@react-navigation/native';
 
 import { extractSource } from '@/shared/react-navigation-trail';
-import { useCreation, useUnmount } from '@/shared/utils/react';
+import { useCreation, useDeepMemo, useUnmount } from '@/shared/utils/react';
 
 import type { Container, ContainerConstructor } from '../../Container';
 import { useContainerRegistry } from '../ContainerRegistryProvider';
@@ -48,6 +48,8 @@ export function ContainerProvider<T extends Container = Container>({
 
   const routeKey = route.key;
 
+  const params = useDeepMemo(() => route.params, [route.params]);
+
   const { container, registered } = useCreation<{
     container: Container;
     registered: boolean;
@@ -65,7 +67,7 @@ export function ContainerProvider<T extends Container = Container>({
       });
 
     const createdContainer = containerClass
-      ? new containerClass(parentContainer, route.params, { navigation, route })
+      ? new containerClass(parentContainer, params, { navigation, route })
       : parentContainer;
 
     // Если используется уже зарегистрированный контейнер в качестве родителя, то не регистрируем новый,
@@ -81,7 +83,7 @@ export function ContainerProvider<T extends Container = Container>({
     }
 
     return { container: createdContainer, registered: shouldRegister };
-  }, [registry, routeKey, navigation, parentContext, containerClass, route.params]);
+  }, [containerClass, navigation, registry, parentContext, routeKey, params]);
 
   useUnmount(() => {
     if (registered) {

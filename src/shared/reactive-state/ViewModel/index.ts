@@ -16,7 +16,7 @@ import {
 import { EffectsBuilder } from '../EffectsBuilder';
 import { ReducerBuilder, ReducerMap } from '../ReducerBuilder';
 
-type DispatchArguments<A extends Actions, T extends ActionType<A>> = undefined extends A[T]
+type PayloadArgs<A extends Actions, T extends ActionType<A>> = undefined extends A[T]
   ? [payload?: ActionPayload<A, T>]
   : [payload: ActionPayload<A, T>];
 
@@ -143,8 +143,9 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
 
   protected createAction<T extends ActionType<A>>(
     type: T,
-    payload?: ActionPayload<A, T>,
+    ...payloadArgs: PayloadArgs<A, T>
   ): Action<A, T> {
+    const [payload] = payloadArgs;
     return createAction(type, payload);
   }
 
@@ -155,7 +156,7 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
    * @param payloadArgs Payload действия.
    */
   @bind()
-  dispatch<T extends ActionType<A>>(type: T, ...payloadArgs: DispatchArguments<A, T>): void {
+  dispatch<T extends ActionType<A>>(type: T, ...payloadArgs: PayloadArgs<A, T>): void {
     const [payload] = payloadArgs;
     this.actionSubject.next(createAction(type, payload));
   }

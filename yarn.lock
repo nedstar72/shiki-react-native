@@ -3479,6 +3479,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jest/types@npm:^26.6.2":
+  version: 26.6.2
+  resolution: "@jest/types@npm:26.6.2"
+  dependencies:
+    "@types/istanbul-lib-coverage": "npm:^2.0.0"
+    "@types/istanbul-reports": "npm:^3.0.0"
+    "@types/node": "npm:*"
+    "@types/yargs": "npm:^15.0.0"
+    chalk: "npm:^4.0.0"
+  checksum: 10c0/5b9b957f38a002895eb04bbb8c3dda6fccce8e2551f3f44b02f1f43063a78e8bedce73cd4330b53ede00ae005de5cd805982fbb2ec6ab9feacf96344240d5db2
+  languageName: node
+  linkType: hard
+
 "@jest/types@npm:^29.6.3":
   version: 29.6.3
   resolution: "@jest/types@npm:29.6.3"
@@ -4594,6 +4607,15 @@ __metadata:
   version: 21.0.3
   resolution: "@types/yargs-parser@npm:21.0.3"
   checksum: 10c0/e71c3bd9d0b73ca82e10bee2064c384ab70f61034bbfb78e74f5206283fc16a6d85267b606b5c22cb2a3338373586786fed595b2009825d6a9115afba36560a0
+  languageName: node
+  linkType: hard
+
+"@types/yargs@npm:^15.0.0":
+  version: 15.0.19
+  resolution: "@types/yargs@npm:15.0.19"
+  dependencies:
+    "@types/yargs-parser": "npm:*"
+  checksum: 10c0/9fe9b8645304a628006cbba2d1990fb015e2727274d0e3853f321a379a1242d1da2c15d2f56cff0d4313ae94f0383ccf834c3bded9fb3589608aefb3432fcf00
   languageName: node
   linkType: hard
 
@@ -8161,6 +8183,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-secure-store@npm:15.0.7":
+  version: 15.0.7
+  resolution: "expo-secure-store@npm:15.0.7"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/8273f937c3ee289782beb7dcfc293e3b45d230d46f839fda987029dc130bb00c428a23dffb9f009e11f6a2e963f06e32d60c888e9ccfbf7002c15ea0de93e056
+  languageName: node
+  linkType: hard
+
 "expo-server@npm:^1.0.3":
   version: 1.0.3
   resolution: "expo-server@npm:1.0.3"
@@ -9373,6 +9404,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-ci@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "is-ci@npm:2.0.0"
+  dependencies:
+    ci-info: "npm:^2.0.0"
+  bin:
+    is-ci: bin.js
+  checksum: 10c0/17de4e2cd8f993c56c86472dd53dd9e2c7f126d0ee55afe610557046cdd64de0e8feadbad476edc9eeff63b060523b8673d9094ed2ab294b59efb5a66dd05a9a
+  languageName: node
+  linkType: hard
+
 "is-core-module@npm:^2.13.0, is-core-module@npm:^2.16.0, is-core-module@npm:^2.16.1":
   version: 2.16.1
   resolution: "is-core-module@npm:2.16.1"
@@ -10273,6 +10315,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-silent-reporter@npm:0.6.0":
+  version: 0.6.0
+  resolution: "jest-silent-reporter@npm:0.6.0"
+  dependencies:
+    chalk: "npm:^4.0.0"
+    jest-util: "npm:^26.0.0"
+  checksum: 10c0/614284507e91acff6144fd7db45f045cb07f9bb938a0ff229ce7cc35e7945bb9482714b8b53e3438a45dfabc84d317ac27b41c9a1914fb67f82e333a36e3e57b
+  languageName: node
+  linkType: hard
+
 "jest-snapshot@npm:^29.2.1, jest-snapshot@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-snapshot@npm:29.7.0"
@@ -10312,6 +10364,20 @@ __metadata:
     graceful-fs: "npm:^4.2.11"
     picomatch: "npm:^4.0.2"
   checksum: 10c0/896d663554b35258a87ec1a0a0fdd8741fdf4f3239d09fc52fdd88fa5c411a5ece7903bbbbd7d5194743fcb69f62afc3287e90f57736a91e7df95ad421937936
+  languageName: node
+  linkType: hard
+
+"jest-util@npm:^26.0.0":
+  version: 26.6.2
+  resolution: "jest-util@npm:26.6.2"
+  dependencies:
+    "@jest/types": "npm:^26.6.2"
+    "@types/node": "npm:*"
+    chalk: "npm:^4.0.0"
+    graceful-fs: "npm:^4.2.4"
+    is-ci: "npm:^2.0.0"
+    micromatch: "npm:^4.0.2"
+  checksum: 10c0/ab93709840f87bdf478d082f5465467c27a20a422cbe456cc2a56961d8c950ea52511995fb6063f62a113737f3dd714b836a1fbde51abef96642a5975e835a01
   languageName: node
   linkType: hard
 
@@ -11495,7 +11561,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromatch@npm:^4.0.4, micromatch@npm:^4.0.5, micromatch@npm:^4.0.8":
+"micromatch@npm:^4.0.2, micromatch@npm:^4.0.4, micromatch@npm:^4.0.5, micromatch@npm:^4.0.8":
   version: 4.0.8
   resolution: "micromatch@npm:4.0.8"
   dependencies:
@@ -13908,6 +13974,7 @@ __metadata:
     eslint-plugin-prettier: "npm:5.5.4"
     expo: "npm:54.0.21"
     expo-constants: "npm:18.0.10"
+    expo-secure-store: "npm:15.0.7"
     expo-splash-screen: "npm:31.0.10"
     expo-system-ui: "npm:6.0.8"
     graphql: "npm:16.12.0"
@@ -13915,6 +13982,7 @@ __metadata:
     inversify: "npm:7.10.4"
     jest: "npm:29.7.0"
     jest-expo: "npm:54.0.13"
+    jest-silent-reporter: "npm:0.6.0"
     lefthook: "npm:2.0.2"
     lint-staged: "npm:16.2.6"
     mobx: "npm:6.15.0"

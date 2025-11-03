@@ -16,7 +16,7 @@ export type ActionType<A extends Actions> = Extract<keyof A, string>;
 /**
  * Payload экшена.
  */
-export type ActionPayload<A extends Actions, T extends ActionType<A>> = Readonly<A[T]>;
+export type ActionPayload<A extends Actions, T extends ActionType<A>> = A[T];
 
 /**
  * Экшен - комбинация имени экшена и его payload.

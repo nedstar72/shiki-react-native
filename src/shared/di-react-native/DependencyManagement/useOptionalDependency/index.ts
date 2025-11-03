@@ -1,4 +1,4 @@
-import { useLazyCreation } from '@/shared/utils/react';
+import { useCreation } from '@/shared/utils/react';
 
 import type { Token } from '../../Container';
 import { useContainer } from '../../ContainerManagement';
@@ -15,7 +15,7 @@ import { useContainer } from '../../ContainerManagement';
 export default function useOptionalDependency<T>(token: Token<T>): T | undefined {
   const container = useContainer();
 
-  return useLazyCreation(() => {
+  return useCreation(() => {
     return container.getSafely(token);
   }, [container, token]);
 }

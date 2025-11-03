@@ -1,1 +1,1 @@
-export * from './FetchAnimeList';
+export * from './AnimeGateway';

@@ -1,5 +1,5 @@
 import { isString, isSymbol } from '@/shared/utils/js';
-import { useLazyCreation } from '@/shared/utils/react';
+import { useCreation } from '@/shared/utils/react';
 
 import type { Token } from '../../Container';
 import { useContainer } from '../../ContainerManagement';
@@ -17,7 +17,7 @@ import { useContainer } from '../../ContainerManagement';
 export default function useDependency<T>(token: Token<T>): T {
   const container = useContainer();
 
-  const dependency = useLazyCreation(() => {
+  const dependency = useCreation(() => {
     try {
       return container.get(token);
     } catch {
