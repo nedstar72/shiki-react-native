@@ -1,4 +1,4 @@
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, filter } from 'rxjs';
 import { observable, reaction, runInAction } from 'mobx';
 
 import { DisposableBag, type Disposable } from '@/shared/disposable';
@@ -6,20 +6,15 @@ import { bind, memo } from '@/shared/utils/js';
 import { toStream } from '@/shared/utils/mobx';
 
 import {
-  ReducerBuilder,
-  ReducerMap,
+  createAction,
+  type Action,
   type ActionPayload,
   type Actions,
   type ActionType,
   type State,
-} from '../ReducerBuilder';
-
-/**
- * Событие, публикуемое ViewModel при получение экшена.
- */
-export type ViewModelAction<A extends Actions, T extends ActionType<A> = ActionType<A>> = {
-  type: T;
-} & (undefined extends A[T] ? { payload?: ActionPayload<A, T> } : { payload: ActionPayload<A, T> });
+} from '../Core';
+import { EffectsBuilder } from '../EffectsBuilder';
+import { ReducerBuilder, ReducerMap } from '../ReducerBuilder';
 
 type DispatchArguments<A extends Actions, T extends ActionType<A>> = undefined extends A[T]
   ? [payload?: ActionPayload<A, T>]
@@ -32,7 +27,7 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
   #state: S;
 
   private readonly bag = new DisposableBag();
-  private readonly actionSubject = new Subject<ViewModelAction<any, any>>();
+  private readonly actionSubject = new Subject<Action<any, any>>();
   private readonly reducers: ReducerMap<S, A> = new Map();
 
   get state(): Readonly<S> {
@@ -40,24 +35,29 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
   }
 
   @memo()
-  get $state(): Observable<Readonly<S>> {
-    const { observable: $state, disposer } = toStream(this.#state, {
+  get state$(): Observable<Readonly<S>> {
+    const { observable: state$, disposer } = toStream(this.#state, {
       trackMode: 'deep',
       fireImmediately: true,
     });
     this.bag.add(disposer);
-    return $state;
+    return state$;
   }
 
   @memo()
-  get $action(): Observable<ViewModelAction<A>> {
-    return this.actionSubject.asObservable() as Observable<ViewModelAction<A>>;
+  get action$(): Observable<Action<A>> {
+    return this.actionSubject.asObservable() as Observable<Action<A>>;
+  }
+
+  protected get dispatch$() {
+    return this.actionSubject;
   }
 
   constructor(initialState: S) {
     this.#state = observable(initialState);
 
     this.configureReducer();
+    this.configureEffects();
   }
 
   private configureReducer(): void {
@@ -72,7 +72,7 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
       this.reducers.set(type, reducer);
     }
 
-    const subscription = this.$action.subscribe(event => {
+    const subscription = this.action$.subscribe(event => {
       const reducer = this.reducers.get(event.type);
       if (!reducer) {
         return;
@@ -88,12 +88,33 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
     this.bag.add(() => subscription.unsubscribe());
   }
 
+  private configureEffects(): void {
+    const builder = new EffectsBuilder<A>();
+    this.buildEffects(builder);
+    const effects = builder.build();
+
+    effects.forEach(effect => {
+      const subscription =
+        effect.kind === 'action' ? effect.factory(this.actionOf(effect.type)) : effect.factory();
+      this.registerDisposable(() => subscription.unsubscribe());
+    });
+  }
+
   /**
    * Переопределяется наследниками для регистрации редьюсеров.
    *
    * @param builder Построитель редьюсеров, предоставляемый базовым классом.
    */
   protected buildReducer(_builder: ReducerBuilder<S, A>): void {
+    // Реализацию предоставляет наследник.
+  }
+
+  /**
+   * Переопределяется наследниками для регистрации побочных эффектов.
+   *
+   * @param builder Построитель эффектов, предоставляемый базовым классом.
+   */
+  protected buildEffects(_builder: EffectsBuilder<A>): void {
     // Реализацию предоставляет наследник.
   }
 
@@ -107,6 +128,27 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
   }
 
   /**
+   * Формирует поток экшенов указанного типа.
+   *
+   * Используется, когда необходимо реагировать на экшен вне редьюсеров и требуется доступ к payload.
+   *
+   * @param type Имя экшена, payload которого требуется отслеживать.
+   * @returns Observable, публикующее экшены с их payload без изменений.
+   */
+  protected actionOf<T extends ActionType<A>>(type: T): Observable<Action<A, T>> {
+    return this.action$.pipe(
+      filter((event: Action<any, any>): event is Action<A, T> => event.type === type),
+    );
+  }
+
+  protected createAction<T extends ActionType<A>>(
+    type: T,
+    payload?: ActionPayload<A, T>,
+  ): Action<A, T> {
+    return createAction(type, payload);
+  }
+
+  /**
    * Отправляет действие в поток ViewModel.
    *
    * @param type Имя действия.
@@ -115,9 +157,7 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
   @bind()
   dispatch<T extends ActionType<A>>(type: T, ...payloadArgs: DispatchArguments<A, T>): void {
     const [payload] = payloadArgs;
-    const event = (payloadArgs.length > 0 ? { type, payload } : { type }) as ViewModelAction<A, T>;
-
-    this.actionSubject.next(event as ViewModelAction<A>);
+    this.actionSubject.next(createAction(type, payload));
   }
 
   @bind()

@@ -1,3 +1,4 @@
 export { ReducerBuilder } from './ReducerBuilder';
-export { ViewModel, type ViewModelAction } from './ViewModel';
+export { EffectsBuilder } from './EffectsBuilder';
+export { ViewModel } from './ViewModel';
 export { useViewModel } from './useViewModel';

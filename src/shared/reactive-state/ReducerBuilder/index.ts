@@ -1,22 +1,4 @@
-/**
- * Базовый тип состояния ViewModel.
- */
-export type State = object;
-
-/**
- * Базовый тип экшенов ViewModel.
- */
-export type Actions = object;
-
-/**
- * Имя экшена.
- */
-export type ActionType<A extends Actions> = Extract<keyof A, string>;
-
-/**
- * Payload экшена.
- */
-export type ActionPayload<A extends Actions, T extends ActionType<A>> = Readonly<A[T]>;
+import type { Actions, ActionPayload, ActionType, State } from '../Core';
 
 /**
  * Набор параметров для редьюсера.

@@ -1,5 +1,9 @@
-import { ViewModel, type ViewModelAction } from './index';
-import { ReducerBuilder } from '../ReducerBuilder';
+import { Subject } from 'rxjs';
+
+import { ViewModel } from './index';
+import type { Action } from '../Core';
+import type { EffectsBuilder } from '../EffectsBuilder';
+import type { ReducerBuilder } from '../ReducerBuilder';
 
 interface CounterActions {
   inc: { by: number } | undefined;
@@ -13,6 +17,12 @@ class CounterViewModel extends ViewModel<CounterState, CounterActions> {
     super({ count: 0 });
   }
 
+  readonly incEffectActions: Action<CounterActions, 'inc'>[] = [];
+  readonly effectDisposer = jest.fn();
+  readonly externalEffectEvents: string[] = [];
+  readonly externalEffectDisposer = jest.fn();
+  externalSource$!: Subject<string>;
+
   protected override buildReducer(builder: ReducerBuilder<CounterState, CounterActions>): void {
     builder.addCase('inc', (state, payload) => {
       state.count += payload?.by ?? 1;
@@ -22,9 +32,42 @@ class CounterViewModel extends ViewModel<CounterState, CounterActions> {
     });
   }
 
+  protected override buildEffects(builder: EffectsBuilder<CounterActions>): void {
+    builder.addEffect('inc', action$ => {
+      return action$.subscribe({
+        next: action => {
+          this.incEffectActions.push(action);
+        },
+        complete: () => {
+          this.effectDisposer();
+        },
+      });
+    });
+    builder.addEffect(() => {
+      if (!this.externalSource$) {
+        this.externalSource$ = new Subject<string>();
+      }
+
+      const subscription = this.externalSource$.subscribe(value => {
+        this.externalEffectEvents.push(value);
+      });
+
+      subscription.add(() => {
+        this.externalEffectDisposer();
+      });
+
+      return subscription;
+    });
+  }
+
   // Делаем публичным для тестирования
   registerTestDisposable(disposable: () => void): void {
     this.registerDisposable(disposable);
+  }
+
+  // Делаем публичным для тестирования
+  observeAction<T extends keyof CounterActions>(type: T) {
+    return this.actionOf(type);
   }
 }
 
@@ -44,7 +87,7 @@ describe('ViewModel', () => {
     const vm = new CounterViewModel();
     const observedStates: number[] = [];
 
-    const subscription = vm.$action.subscribe(() => {
+    const subscription = vm.action$.subscribe(() => {
       observedStates.push(vm.state.count);
     });
 
@@ -68,10 +111,10 @@ describe('ViewModel', () => {
   it('должен публиковать состояние и экшены как observable', async () => {
     const vm = new CounterViewModel();
     const states: CounterState[] = [];
-    const actions: (ViewModelAction<CounterActions> | { type: string })[] = [];
+    const actions: (Action<CounterActions> | { type: string })[] = [];
 
-    const stateSubscription = vm.$state.subscribe(value => states.push(value));
-    const actionSubscription = vm.$action.subscribe(value => actions.push(value));
+    const stateSubscription = vm.state$.subscribe(value => states.push(value));
+    const actionSubscription = vm.action$.subscribe(value => actions.push(value));
 
     vm.dispatch('inc', { by: 2 });
     // @ts-expect-error
@@ -99,12 +142,41 @@ describe('ViewModel', () => {
     const vm = new CounterViewModel();
 
     const actionComplete = jest.fn();
-    const actionSubscription = vm.$action.subscribe({ complete: actionComplete });
+    const actionSubscription = vm.action$.subscribe({ complete: actionComplete });
 
     vm.dispose();
 
     expect(actionComplete).toHaveBeenCalledTimes(1);
     expect(actionSubscription.closed).toBe(true);
+  });
+
+  it('должен подписывать эффекты на соответствующие экшены', () => {
+    const vm = new CounterViewModel();
+
+    vm.dispatch('inc', { by: 2 });
+    vm.dispatch('dec', { by: 3 });
+    vm.dispatch('inc');
+
+    expect(vm.incEffectActions).toEqual([{ type: 'inc', payload: { by: 2 } }, { type: 'inc' }]);
+  });
+
+  it('должен поддерживать эффекты без привязки к экшенам', () => {
+    const vm = new CounterViewModel();
+
+    vm.externalSource$.next('value-1');
+    vm.externalSource$.next('value-2');
+
+    expect(vm.externalEffectEvents).toEqual(['value-1', 'value-2']);
+  });
+
+  it('должен освобождать ресурсы эффектов при dispose', () => {
+    const vm = new CounterViewModel();
+
+    vm.dispatch('inc');
+    vm.dispose();
+
+    expect(vm.effectDisposer).toHaveBeenCalledTimes(1);
+    expect(vm.externalEffectDisposer).toHaveBeenCalledTimes(1);
   });
 
   describe('select', () => {
@@ -143,6 +215,39 @@ describe('ViewModel', () => {
       expect(values).toEqual([0, 1]);
 
       subscription.unsubscribe();
+    });
+  });
+
+  describe('actionOf', () => {
+    it('должен испускать экшены указанного типа с сохранением payload', () => {
+      const vm = new CounterViewModel();
+      const incActions: Action<CounterActions, 'inc'>[] = [];
+
+      const subscription = vm.observeAction('inc').subscribe(action => {
+        incActions.push(action);
+      });
+
+      vm.dispatch('dec', { by: 4 });
+      vm.dispatch('inc', { by: 2 });
+      vm.dispatch('inc');
+
+      expect(incActions).toEqual([{ type: 'inc', payload: { by: 2 } }, { type: 'inc' }]);
+
+      subscription.unsubscribe();
+    });
+
+    it('должен завершаться вместе с ViewModel', () => {
+      const vm = new CounterViewModel();
+      const completeSpy = jest.fn();
+
+      const subscription = vm.observeAction('dec').subscribe({
+        complete: completeSpy,
+      });
+
+      vm.dispose();
+
+      expect(completeSpy).toHaveBeenCalledTimes(1);
+      expect(subscription.closed).toBe(true);
     });
   });
 });
