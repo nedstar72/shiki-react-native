@@ -5,13 +5,34 @@ import { DisposableBag, type Disposable } from '@/shared/disposable';
 import { bind, memo } from '@/shared/utils/js';
 import { toStream } from '@/shared/utils/mobx';
 
-import { ReducerBuilder, ReducerMap, type State, type Action } from '../ReducerBuilder';
+import {
+  ReducerBuilder,
+  ReducerMap,
+  type ActionPayload,
+  type Actions,
+  type ActionType,
+  type State,
+} from '../ReducerBuilder';
 
-export class ViewModel<S extends State, A extends Action> implements Disposable {
+/**
+ * Событие, публикуемое ViewModel при получение экшена.
+ */
+export type ViewModelAction<A extends Actions, T extends ActionType<A> = ActionType<A>> = {
+  type: T;
+} & (undefined extends A[T] ? { payload?: ActionPayload<A, T> } : { payload: ActionPayload<A, T> });
+
+type DispatchArguments<A extends Actions, T extends ActionType<A>> = undefined extends A[T]
+  ? [payload?: ActionPayload<A, T>]
+  : [payload: ActionPayload<A, T>];
+
+/**
+ * Базовый класс для построения ViewModel.
+ */
+export class ViewModel<S extends State, A extends Actions> implements Disposable {
   #state: S;
 
   private readonly bag = new DisposableBag();
-  private readonly actionSubject = new Subject<Readonly<A>>();
+  private readonly actionSubject = new Subject<ViewModelAction<any, any>>();
   private readonly reducers: ReducerMap<S, A> = new Map();
 
   get state(): Readonly<S> {
@@ -29,8 +50,8 @@ export class ViewModel<S extends State, A extends Action> implements Disposable 
   }
 
   @memo()
-  get $action(): Observable<Readonly<A>> {
-    return this.actionSubject.asObservable();
+  get $action(): Observable<ViewModelAction<A>> {
+    return this.actionSubject.asObservable() as Observable<ViewModelAction<A>>;
   }
 
   constructor(initialState: S) {
@@ -51,31 +72,52 @@ export class ViewModel<S extends State, A extends Action> implements Disposable 
       this.reducers.set(type, reducer);
     }
 
-    const subscription = this.$action.subscribe(action => {
-      const reducer = this.reducers.get(action.type);
+    const subscription = this.$action.subscribe(event => {
+      const reducer = this.reducers.get(event.type);
       if (!reducer) {
         return;
       }
 
+      const payload = 'payload' in event ? event.payload : undefined;
+
       runInAction(() => {
-        reducer(this.#state, action);
+        reducer(this.#state, payload as ActionPayload<A, typeof event.type>);
       });
     });
 
     this.bag.add(() => subscription.unsubscribe());
   }
 
+  /**
+   * Переопределяется наследниками для регистрации редьюсеров.
+   *
+   * @param builder Построитель редьюсеров, предоставляемый базовым классом.
+   */
   protected buildReducer(_builder: ReducerBuilder<S, A>): void {
-    // Default implementation intentionally left blank.
+    // Реализацию предоставляет наследник.
   }
 
+  /**
+   * Регистрирует внешний disposable в жизненном цикле ViewModel.
+   *
+   * @param disposable Объект или функция очистки, которую необходимо вызвать при dispose.
+   */
   protected registerDisposable(disposable: Disposable | (() => void)): void {
     this.bag.add(disposable);
   }
 
+  /**
+   * Отправляет действие в поток ViewModel.
+   *
+   * @param type Имя действия.
+   * @param payloadArgs Payload действия.
+   */
   @bind()
-  dispatch(action: A): void {
-    this.actionSubject.next(action);
+  dispatch<T extends ActionType<A>>(type: T, ...payloadArgs: DispatchArguments<A, T>): void {
+    const [payload] = payloadArgs;
+    const event = (payloadArgs.length > 0 ? { type, payload } : { type }) as ViewModelAction<A, T>;
+
+    this.actionSubject.next(event as ViewModelAction<A>);
   }
 
   @bind()

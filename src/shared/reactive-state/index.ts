@@ -1,3 +1,3 @@
-export { ReducerBuilder, type ReducerMap } from './ReducerBuilder';
-export { ViewModel } from './ViewModel';
+export { ReducerBuilder } from './ReducerBuilder';
+export { ViewModel, type ViewModelAction } from './ViewModel';
 export { useViewModel } from './useViewModel';

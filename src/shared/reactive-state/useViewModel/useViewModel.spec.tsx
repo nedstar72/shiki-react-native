@@ -23,7 +23,11 @@ const { useDisposable } = jest.requireMock('@/shared/disposable') as {
   useDisposable: jest.Mock;
 };
 
-class DummyViewModel extends ViewModel<{ value: number }, { type: 'noop' }> {
+interface DummyActions {
+  noop: undefined;
+}
+
+class DummyViewModel extends ViewModel<{ value: number }, DummyActions> {
   constructor() {
     super({ value: 0 });
   }
