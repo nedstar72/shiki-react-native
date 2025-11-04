@@ -6,8 +6,7 @@ describe('Example', () => {
   });
 
   beforeEach(async () => {
-    // Не можем использовать reloadReactNative, см. https://github.com/wix/Detox/issues/4760
-    // await device.reloadReactNative();
+    await device.reloadReactNative();
   });
 
   it('should show hello screen after tap', async () => {
