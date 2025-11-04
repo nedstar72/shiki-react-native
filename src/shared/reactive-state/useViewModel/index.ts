@@ -3,7 +3,7 @@ import { useDisposable } from '@/shared/disposable';
 
 import type { ViewModel } from '../ViewModel';
 
-type ViewModelToken<T extends ViewModel<any, any>> = new (...args: any[]) => T;
+type ViewModelToken<T extends ViewModel<any, any>> = Constructor<T>;
 
 /**
  * Разрешает ViewModel из контейнера зависимостей и привязывает её к жизненному циклу компонента.
