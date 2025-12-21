@@ -1,4 +1,4 @@
-import { catchError, from, map, of, switchMap } from 'rxjs';
+import { EMPTY, catchError, from, ignoreElements, map, of, switchMap } from 'rxjs';
 
 import { EffectsBuilder, ReducerBuilder, ViewModel } from '@/shared/reactive-state';
 
@@ -10,30 +10,29 @@ export interface AuthState {
 
 export type AuthAction = {
   login: undefined;
-  loginSuccess: undefined;
   loginFailure: undefined;
-  logout: never;
+  logout: undefined;
+  setAuthStatus: { isAuthorized: boolean };
 };
 
 export class AuthViewModel extends ViewModel<AuthState, AuthAction> {
   constructor(private readonly authService: AuthService) {
     super({
-      authStatus: authService.isAuthorized ? 'authorized' : 'unauthorized',
+      authStatus: 'loading',
     });
+
+    this.initialize();
   }
 
   override buildReducer(builder: ReducerBuilder<AuthState, AuthAction>): void {
     builder.addCase('login', state => {
       state.authStatus = 'loading';
     });
-    builder.addCase('loginSuccess', state => {
-      state.authStatus = 'authorized';
-    });
     builder.addCase('loginFailure', state => {
       state.authStatus = 'error';
     });
-    builder.addCase('logout', state => {
-      state.authStatus = 'unauthorized';
+    builder.addCase('setAuthStatus', (state, payload) => {
+      state.authStatus = payload.isAuthorized ? 'authorized' : 'unauthorized';
     });
   }
 
@@ -43,11 +42,30 @@ export class AuthViewModel extends ViewModel<AuthState, AuthAction> {
         .pipe(
           switchMap(() =>
             from(this.authService.authorize()).pipe(
-              map(() => this.createAction('loginSuccess')),
+              ignoreElements(),
               catchError(() => of(this.createAction('loginFailure'))),
             ),
           ),
         )
+        .subscribe(this.dispatch$);
+    });
+
+    builder.addEffect('logout', logoutAction$ => {
+      return logoutAction$
+        .pipe(
+          switchMap(() =>
+            from(this.authService.logout()).pipe(
+              ignoreElements(),
+              catchError(() => EMPTY),
+            ),
+          ),
+        )
+        .subscribe();
+    });
+
+    builder.addEffect(() => {
+      return this.authService.isAuthorized$
+        .pipe(map(isAuthorized => this.createAction('setAuthStatus', { isAuthorized })))
         .subscribe(this.dispatch$);
     });
   }

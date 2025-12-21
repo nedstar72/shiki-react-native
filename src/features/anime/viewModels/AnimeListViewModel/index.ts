@@ -20,6 +20,8 @@ export class AnimeListViewModel extends ViewModel<AnimeListState, AnimeListActio
     super({
       animes: [],
     });
+
+    this.initialize();
   }
 
   override buildReducer(builder: ReducerBuilder<AnimeListState, AnimeListActions>) {

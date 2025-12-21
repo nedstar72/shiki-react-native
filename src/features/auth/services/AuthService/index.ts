@@ -1,3 +1,4 @@
+import { map, type Observable } from 'rxjs';
 import { authorize } from 'react-native-app-auth';
 
 import { Constants, SecureStore } from '@/features/core';
@@ -5,8 +6,8 @@ import { Constants, SecureStore } from '@/features/core';
 export class AuthService {
   constructor(private readonly secureStore: SecureStore) {}
 
-  get isAuthorized(): boolean {
-    return this.secureStore.accessToken !== null;
+  get isAuthorized$(): Observable<boolean> {
+    return this.secureStore.accessToken$.pipe(map(token => Boolean(token)));
   }
 
   async authorize(): Promise<void> {
@@ -23,5 +24,12 @@ export class AuthService {
 
     await this.secureStore.setAccessToken(accessToken);
     await this.secureStore.setRefreshToken(refreshToken);
+  }
+
+  async logout(): Promise<void> {
+    await Promise.all([
+      this.secureStore.setAccessToken(null),
+      this.secureStore.setRefreshToken(null),
+    ]);
   }
 }

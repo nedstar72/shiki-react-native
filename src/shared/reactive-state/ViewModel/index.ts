@@ -26,6 +26,8 @@ type PayloadArgs<A extends Actions, T extends ActionType<A>> = undefined extends
 export class ViewModel<S extends State, A extends Actions> implements Disposable {
   #state: S;
 
+  private initialized = false;
+
   private readonly bag = new DisposableBag();
   private readonly actionSubject = new Subject<Action<any, any>>();
   private readonly reducers: ReducerMap<S, A> = new Map();
@@ -55,9 +57,23 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
 
   constructor(initialState: S) {
     this.#state = observable(initialState);
+  }
+
+  /**
+   * Инициализирует редьюсеры и эффекты.
+   *
+   * Вызывается наследниками после того, как все зависимости проинициализированы.
+   * Повторный вызов приведёт к ошибке.
+   */
+  protected initialize(): void {
+    if (this.initialized) {
+      throw new Error('ViewModel already initialized');
+    }
 
     this.configureReducer();
     this.configureEffects();
+
+    this.initialized = true;
   }
 
   private configureReducer(): void {
@@ -95,7 +111,9 @@ export class ViewModel<S extends State, A extends Actions> implements Disposable
 
     effects.forEach(effect => {
       const subscription =
-        effect.kind === 'action' ? effect.factory(this.actionOf(effect.type)) : effect.factory();
+        effect.kind === 'action'
+          ? effect.factory.call(this, this.actionOf(effect.type))
+          : effect.factory.call(this);
       this.registerDisposable(() => subscription.unsubscribe());
     });
   }

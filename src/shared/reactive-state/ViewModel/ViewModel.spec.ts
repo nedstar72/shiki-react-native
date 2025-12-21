@@ -15,6 +15,8 @@ type CounterState = { count: number };
 class CounterViewModel extends ViewModel<CounterState, CounterActions> {
   constructor() {
     super({ count: 0 });
+
+    this.initialize();
   }
 
   readonly incEffectActions: Action<CounterActions, 'inc'>[] = [];
@@ -249,5 +251,31 @@ describe('ViewModel', () => {
       expect(completeSpy).toHaveBeenCalledTimes(1);
       expect(subscription.closed).toBe(true);
     });
+  });
+
+  it('должен вызывать эффекты после инициализации, когда зависимости уже заданы', () => {
+    const dependency = { handle: jest.fn() };
+
+    class DependentViewModel extends ViewModel<{ ready: boolean }, { noop: undefined }> {
+      constructor(private readonly dep: typeof dependency) {
+        super({ ready: false });
+
+        this.initialize();
+      }
+
+      protected override buildEffects(builder: EffectsBuilder<{ noop: undefined }>): void {
+        builder.addEffect(() => {
+          this.dep.handle();
+
+          return new Subject<void>().subscribe();
+        });
+      }
+    }
+
+    const vm = new DependentViewModel(dependency);
+
+    expect(dependency.handle).toHaveBeenCalledTimes(1);
+
+    vm.dispose();
   });
 });
